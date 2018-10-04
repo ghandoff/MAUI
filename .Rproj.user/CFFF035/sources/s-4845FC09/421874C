@@ -1,0 +1,23 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1538618224601.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "3714148098",
+    "id" : "421874C",
+    "lastKnownWriteTime" : 1538618388,
+    "last_content_update" : 1538618388863,
+    "path" : "~/Documents/GitHub/MAUI/sandbox.R",
+    "project_path" : "sandbox.R",
+    "properties" : {
+        "cursorPosition" : "14,39",
+        "scrollLine" : "0",
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}
