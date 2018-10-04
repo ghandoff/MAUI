@@ -292,3 +292,36 @@ Changes not staged for commit:
 	[31mmodified:   .Rproj.user/CFFF035/console06/906B45FC[m
 
 ]0;~/Documents/GitHub/MAUIpeltier:MAUI garrettjaeger$ git commit - a[K[Ka
+hint: Waiting for your editor to close the file... [?2004h[K[master 22e2453] again and again
+ 3 files changed, 61 insertions(+), 3 deletions(-)
+ rewrite .Rproj.user/CFFF035/console06/INDEX001 (70%)
+]0;~/Documents/GitHub/MAUIpeltier:MAUI garrettjaeger$ git status
+On branch master
+Your branch is ahead of 'origin/master' by 2 commits.
+  (use "git push" to publish your local commits)
+
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git checkout -- <file>..." to discard changes in working directory)
+
+	[31mmodified:   .Rproj.user/CFFF035/console06/906B45FC[m
+
+no changes added to commit (use "git add" and/or "git commit -a")
+]0;~/Documents/GitHub/MAUIpeltier:MAUI garrettjaeger$ git pull
+Already up to date.
+]0;~/Documents/GitHub/MAUIpeltier:MAUI garrettjaeger$ git i[Korigin remote
+git: 'origin' is not a git command. See 'git --help'.
+]0;~/Documents/GitHub/MAUIpeltier:MAUI garrettjaeger$ git fetch
+]0;~/Documents/GitHub/MAUIpeltier:MAUI garrettjaeger$ git status
+On branch master
+Your branch is ahead of 'origin/master' by 2 commits.
+  (use "git push" to publish your local commits)
+
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git checkout -- <file>..." to discard changes in working directory)
+
+	[31mmodified:   .Rproj.user/CFFF035/console06/906B45FC[m
+
+no changes added to commit (use "git add" and/or "git commit -a")
+]0;~/Documents/GitHub/MAUIpeltier:MAUI garrettjaeger$ git add .
