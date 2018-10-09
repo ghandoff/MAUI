@@ -1,0 +1,229 @@
+---
+title: "Uniqueness Metrics Outline"
+author: "Zach Burns"
+date: "June 29, 2017"
+output:
+  word_document:
+    reference_docx: word-styles-default.docx
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE, echo = FALSE, message = FALSE, warning = FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+#library(plotly)
+```
+
+#```{r code = readLines('Code/graphs in paper.R'), echo = FALSE, message = FALSE, warning = FALSE}
+#```
+
+## Problem statement
+* Take as given the standardized answer set to an open-ended creativity task
+* One might predict that response freqency takes one of two shapes:
+  + More frequently given responses make up a large proportion of all responses, less frequently given responses make up a small proportion
+    - (Possible underlying process: responses are ordered, people generate the responses in order, more creative individuals can get through more of the order)
+  + Less frequently given responses make up a large proportion of all responses, more frequently given responses make up a small proportion
+    - (possible underlying process: ???)
+* For a variety of reasons, a standardized answer sets tend to take the latter shape
+
+## Aside on Standardization
+Open-ended creativity tasks provide a challenge to creativity research. In particular, scoring response uniqueness necessitates a round of standardization prior to calculation of any uniqueness metric. Analyses may then be performed the tally how many other participants gave the same standardized answers. This standardization process is performed only lightly to distinguish it from the relatively heavier standarization of grouping every response into an a priori known lexical category. For example, if the prompt is "name all the uses you can think of for a brick," "break car window" and "break automobile window" would likely be standardized to the same response. However, neither of these would be standardized to a conceptually similar response ("break truck window"), a more specific version of the same response ("break car window to steal stereo"), or a less specific version of the same response ("break window").
+
+One might be tempted to solve this problem by any number of standard solutions used to boost cross-coder alphas of qualitative data. Additional training of coders might improve standardized sets, but given that the responses are scored for uniqueness, better responses are less likely to be seen in training sets by definition. Having multiple coders who must agree could potentially improve agreement, but will still be based on the particular sample, and not applicable across samples (e.g. coders may agree that breaking a truck window and car window are the same in one sample and not another).
+
+## Response Frequency and Density
+Even with better standardization, the resulting set of standardized responses will generally include a great number of responses given by only a single participant. There are likely to be a large number of somewhat esoteric (and possibly invalid) responses. In the samples we've observed, singlets account for 20% - 30% of all responses given regardless of sample size:
+
+(some graphs here: x-axis = normalized response frequency rank in sample (from most to least frequent); y-axis = count of reponses)
+
+```{r frequency graphs, echo = FALSE, message = FALSE, warning = FALSE}
+hist <- sample1[[5]] %>%
+  ggplot(., aes(midRank, y=..scaled..)) + geom_density(alpha = 0.5) + facet_wrap(~ itemID)
+hist <- ggplotly(hist)
+# code to create png if exporting into Word
+tmpFile <- tempfile(fileext = ".png")
+export(hist, file = tmpFile)
+```
+
+
+For the purposes of this paper, we take as given the response set (and standardization thereof). By the end of the paper, we will see that in general, the most useful measure of response uniqueness is non-parametric; in doing so, we can sidestep many issues that plague measures with implied assumptions about the underlying response set.
+
+## Paper summary
+* We discuss several possible measures of uniqueness: justification, underlying assumptions, pros, cons, etc.
+* We analyze several reponse sets collected under various conditions over a span of many years
+* We ignore any conditioning that took place in the original studies
+  + Assertion: The response set is what it is; conditioning might change how that was generated, but that's why we're analyzing many datasets to see the possible shapes the set can take
+* We demonstrate properties of uniqueness measures from the existing datasets
+* we show that a non-parametric density measure has many properties that creativity researchers like
+
+## Description & review of existing research using open-ended creativity tasks
+
+## Description of our data
+* Possibly here: discussion of the three types of factors (defined by invariance across other factor types) that impact response set
+  + item-level: task type, item subtype
+  + participant/sample-level: individual demographics (including "creative trait"), group demographics (including N)
+  + researcher-level: standardization
+* All data was standardized by the same person, reducing concerns about researcher-level variance
+* All data based on a small set of tasks (items) allowing for comparison across samples (let's not call it test-retest reliability, but similar concept)
+* Some data has the same participants across multiple items, allowing for
+  + comparison of variance across participants
+  + comparison of variance within task type
+  
+## Description of currently used UI
+* (Description of measure)
+* Justified because same participant can't give the same standardized response multiple times
+* Because of the density of responses, there are many responses that will meet the threshold:
+  + (show graphs: x-axis = UI score; y-axis = count of reponses)
+```{r UI frequency graphs, echo = FALSE, message = FALSE, warning = FALSE}
+UIhist <- sample1[[5]] %>%
+  ggplot(., aes(UI, y=..scaled..)) + geom_density(alpha = 0.5) + facet_wrap(~ itemID)
+UIhist <- ggplotly(UIhist)
+
+# code to create png if exporting into Word
+tmpFile <- tempfile(fileext = ".png")
+export(UIhist, file = tmpFile)
+```
+
+* Because UI varies in N (but response density does not) increasing N simply means that higher frequency responses surpass the threshold
+  + (show graphs: x-axis = UI score; y-axis = count of reponses; z-axis = N)
+```{r UI by N frequency graphs, echo = FALSE, message = FALSE, warning = FALSE}
+
+UIbyN <- sample1[[5]] %>%
+  ggplot(., aes(midDens, y=..scaled..)) + geom_density(alpha = 0.5)
+UIbyN <- ggplotly(UIbyN)
+#UIbyN <- plot_ly(sample1[[5]], x = ~normRank, y = ~most, z = ~cumDens, type = 'scatter3d', mode = 'lines', color = ~type)
+
+# code to create png if exporting into Word
+tmpFile <- tempfile(fileext = ".png")
+export(UIbyN, file = tmpFile)
+``` 
+
+* varying the threshold is a possible solution, but still arbitrary
+
+## Two possible alternatives not based on N
+* MAUI (formulation of (most-freq)/(most-1))
+  + pros and cons
+* normalized ln MAUI (formulation of ln(freq/most)/ln(1/most))
+  + pros and cons
+* Both show improved performance compared to UI (w.r.t. being more uniform)
+* Why hasn't this been used?
+  + slightly complicated to calculate
+  + not intuitively obvious
+
+## Non-parametric alternative
+* density measure
+  + formulation:
+    - calculate R = count of all responses given in sample (including multiple counting of responses given more than once)
+    - order all responses by frequency in sample
+    - rank from 1 (most given) to N (least given, will almost alway be frequency of 1)
+    - score each response-rank: [{all responses of lower rank} + {all responses of equal rank}/2]/R
+  + pros and cons
+* Why hasn't this been used?
+  + very complicated to calculate
+
+## Item level comparison of uniqueness indices
+* histograms of all indices by item
+  + (show graphs: x-axis = UI score; y-axis = count of reponses. Works because all UIs are on [0,1])
+* demonstrate that under standard conditions:
+  + UI is always very dense towards the LHS
+  + MAUI and normlnMAUI are more uniform
+* demonstrate that under conditions sometimes observed (e.g. task 2 item 2):
+  + UI is more uniform
+  + MAUI and normlnMAUI are dense towards RHS
+* demonstrate that under all conditions:
+  + density is uniform
+    - it kind of has to be, that's how it was designed
+
+## Participant level comparison of uniqueness indices
+* show "test-retest" reliability for multiple items w/in participant of all the UIs
+  + test: comparing w/in participant variance for UIs. Prediction: density gives lower variance
+  + test/graphs: in samples w/ participants taking multiple tasks: average score of UIs over multiple tasks
+* Don't really know what it will show!
+* Hopefully we'll find less variability for density
+
+## Task level comparison of uniqueness indices
+* show "test-retest" reliability for multiple items w/in participant of all the UIs
+* show graphs? Still unclear which are best. open to suggestions.
+
+<!-- from previous document
+
+## Background assumptions
+* creativity is ill-defined in general
+* therefore, we define creativity relative to the observed sample
+* creativity can be equated across items if we use a metric that's relative to something in the sample
+* even if this metric is not used directly (e.g. if converting to a binary score) it's still important to know how it operates, and whether it is consistent with our assumptions about creativity
+* we cannot observe creativity (i.e. how creative an individual is) directly, we can only observe how creative a response given by an individual is
+* even if we are only concerned with the creativity of an individual we need to use a response-based metric
+
+## What makes a response creative?
+1. A response is more creative if fewer participants in the sample give that response
+  + e.g. a response given by 5/100 participants is more creative than one given by 10/100 participants (regardless of how many responses each participant generates)
+2. A response is more creative if it makes up a lower percentage of total responses
+  + e.g. a response that makes up 5/1000 responses is more creative than that makes up 10/1000 participants (regardless of how many participants are in the sample)
+
+The standard metric currently used is $Creativity_i = \frac{Count(i)}{N}$ where i is a given response, Count(i) is the number of times that response was given, and N is the number of participants. This metric respects principle 1 from above, but cannot account for 2. Suppose a particular answer was given the same number of times in two samples with equal N, one with 100 total responses and one with 5000 total responses. The response is seen as equally creative in both samples, which doesn't comport with our intuition.
+
+A different proposed metric is $Creativity_i = \frac{Count(i)}{R}$ where i is a given response, Count(i) is the number of times that response was given, and R is the number of total responses. This metric respects principle 2 from above, but cannot account for 1. Suppose a particular answer was given the same number of times in two samples with equal R, one with 50 participants and one with 200 participants. The response is seen as equally creative in both samples, which similarly doesn't comport with our intuition.
+
+*flesh out later, if important->* note that we can transform the former metric into the latter by multiplying by $\frac {N}{R}$ (i.e. the inverse of average responses given by a participant). Thus, if using the first metric at a .95 creativity threshold, this is the same as using the second metric at a $.05*\frac{N}{R}$ threshold. Hence, a fixed threshold in one metric can mean different thresholds depending on the average response production of participants. This also reveals a troublesome point about using such a threshold with these metrics: the threshold is absolute (i.e. sample invariant) whereas the metric is relative.
+
+Note that neither of these metrics is generalizable in that it doesn't have a stable meaning across items or samples. *flesh out later ->* As in, the distance between a .08 response and a .03 response is hard to interpret in different settings. Similarly, the maximum and minimum values of creativity differ by sample. The theoretical least creative response (i.e. a response given by all participants) has a value of 1 in the first metric and $\frac {N}{R}$ in the second. The theoretical least creative response (i.e a response given by only a single participant) has a value of $\frac {1}{N}$ in the first metric and $\frac {1}{R}$ in the second metric. This a priori unpredictable range makes comparison difficult.
+
+## Proposed new metric
+
+We propose a metric that sidesteps the question of a denominator at all. This metric is scaled relative to the item in question.
+
+$Creativity_{i} = \frac{Count(X_{most})-Count(i)}{Count(X_{most})-Count(X_{least})}$
+
+Where $Count(X_{most})$ is how many times the most frequent response was given and $Count(X_{least})$ is how many times the least frequent response was given.
+
+This metric has many useful properties:
+
+1. Higher scores mean more creative answers
+  + This was of course possible by subtracting either above metric from above
+2. Maximum and mimimum are well-define *a priori*
+  + Maximum is the most creative response, and is scored as 1
+  + Minimum is the least creative respones, and is scored as 0
+3. Thresholds are now relative
+  + A threshold of .95 can be defined as "in the 95<sup>th</sup> percentile of creative responses"
+
+We can split this metric into pieces for further interpretation:
+
+$Creativity_{i} = \frac{Count(X_{most})}{Count(X_{most})-Count(X_{least})} - \frac {Count(i)}{Count(X_{most})-Count(X_{least})}$
+
+The fraction on the left is the ratio of how frequently the most popular response was to the range of response popularity. <!--Its inverse ($\frac{Count(X_{most})-Count(X_{least})}{Count(X_{most})}$) can be interpreted as how much "harder" it is to generate the most creative response as compared to the least creative response. Thus, the fraction on the left can be interpreted as a measure of how easy it is to generate the /comment To interpret this, fix $Count(X_{most})$. As $Count(X_{least})$ increases, the left portion grows; we can think of this portion as how much "easier" it is to generate the most frequent response than the least frequent response. (Across items, one can think of this as a measure of descriminability. Higher values mean that there exists more variance in frequency of responses given, and so should be able to more accurately measure the differences in creativity.) The value is non-negative.
+
+The fraction on the right is a fraction of how many times the focal response was given relative to the range of response popularity. *Need to think more about interpretation here.*
+
+Note that a sample invariant metric can also be transformed more reliably. Suppose we think that not all increases in the creativity metric are equal (e.g. a .95 response is relatively more creative to a .90 response than a .6 response is to a .5 response). We might consider a slightly adapted metric (to account for the fact that $\ln 0$ is undefined):
+
+$Creativity_{i} = - \ln (\frac{Count(i)}{Count(X_{most})})$
+
+The least creative (most given) response is still scored 0, but the most creative response has not theoretical maximum value. (with this metric, the creativity score of a .5 response and a .6 response .69 an .92, respectively; this difference is less than that of a .9 and a .95 response, scored at 2.30 and 3.00, respectively). One can imagine other transformations which reward different levels of creativity differentially.
+
+Perhaps the largest advantage to using this metric is that it makes all responses usable. With the old metric, conversion to a binary categorization of each response was required, because metric values were less well defined as an answer became less common. That is, the most commonly given response within a sample could take nearly any value on the metric, so further differentiation with absolute thresholds was impossible. With the proposed metric, the well-defined range allows for each response to have a sensible creativity score.
+
+-->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
