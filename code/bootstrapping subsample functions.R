@@ -12,8 +12,18 @@ std_to_flextable <- function(resp, item_col, id_col, flex_col) {
     ungroup()
 }
 
+#' takes P x flex frame and bootstrap size
+#' returns bootstrap size x (part ID, n) table
+boot_nums <- function(data, size) {
+  data %>%
+  select(partID) %>%
+  sample_n(size, replace = FALSE) %>%
+  mutate(n = size)
+}
+
 #' takes frame, item id, and bootstrap size
 #' returns a column of partIDs in the bootstrap
+#' used if we need to ensure that the bootstrap sample has done the focal task
 sample_ids <- function(data, item, size) {
   d <- data %>%
     select(one_of(c('partID', item))) %>%

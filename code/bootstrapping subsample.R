@@ -1,6 +1,7 @@
+library(openxlsx)
+library(foreach)
 library(tidyverse)
 library(readxl)
-library(openxlsx)
 
 set.seed(1729)
 
@@ -21,6 +22,13 @@ holdout_nums <- part_flexbyitem %>%
 #' P x item frame of those remaining
 remains_flexbyitem <- part_flexbyitem %>%
   filter(!partID %in% holdout_nums$partID)
+
+#' creates entire list of bootstrapped partIDs
+#' note that not all of them have done all items
+boot_parts <- foreach(i = seq(100, 800, by=100), .combine='rbind') %do% boot_nums(remains_flexbyitem, i)
+
+
+
 
 N <- 100
 focal_item <- 'U1'
