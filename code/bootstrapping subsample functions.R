@@ -35,7 +35,8 @@ sample_responses <- function(all_responses, ids, item) {
 sort_count <- function(resp) {
   d <- resp %>%
     group_by(Std) %>% #Std is file-specific
-    summarise(count = n())
+    summarise(count = n()) %>%
+    ungroup()
 } 
 
 #' takes df of sample responses   
@@ -50,7 +51,8 @@ ranks <- function(resp, size) {
     mutate(mass = mass*count,
            MAUI = ((cumsum - mass) + (mass/2))/max(cumsum),
            pct_giving = count/(size + 100)) %>%
-    arrange(desc(count))
+    arrange(desc(count)) %>%
+    ungroup()
 }    
 
 #' frame for Gini & other calculations
