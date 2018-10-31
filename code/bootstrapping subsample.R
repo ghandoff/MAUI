@@ -9,15 +9,13 @@ source('code/bootstrapping subsample functions.R')
 
 all_responses <- read_csv('data/Garrett Dissertation Data Answers Only.csv')
 
-#' part_items is a P x item frame of flex scores
+#' part_flexbyitem is a P x item frame of flex scores
 #' crucially, NA means that the item was not completed by the P
-part_flexbyitem <- read_csv('data/participant table.csv') %>% #'participant table is placeholder for all_responses, I think?
-  select(one_of(c('item', 'partID', 'flexibility'))) %>%
-  spread(item, flexibility)
+part_flexbyitem <- std_to_flextable(all_responses, 'TypeItem', 'partID', 'FlexCat')
 
 #' column of ID numbers in the target sample
 holdout_nums <- part_flexbyitem %>%
-  na.omit() %>%
+  na.omit() %>% #' ensures target sample did all 9 items
   sample_n(100, replace = FALSE) %>%
   select(partID)
 #' P x item frame of those remaining

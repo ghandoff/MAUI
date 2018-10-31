@@ -1,3 +1,17 @@
+#' takes entire P x (ID, Type, Response, Std, FlexCat) frame
+#' returns P x item fram of flex scores
+std_to_flextable <- function(resp, item_col, id_col, flex_col) {
+  item <- enquo(item_col)
+  id <- enquo(id_col)
+  flex <- enquo(flex_col)
+  tbl <- all_responses %>%
+    select(one_of(c(!!item, !!id, !!flex))) %>%
+    group_by_at(vars(one_of(c(!!id, !!item)))) %>%
+    summarise(flexibility = n()) %>%
+    spread(!!item, flexibility) %>%
+    ungroup()
+}
+
 #' takes frame, item id, and bootstrap size
 #' returns a column of partIDs in the bootstrap
 sample_ids <- function(data, item, size) {
@@ -49,3 +63,4 @@ item_calcs <- function(rnk) {
     mutate(rank = rank - 1) %>%
     mutate(norm_rank = rank/max(rank))
 }
+
