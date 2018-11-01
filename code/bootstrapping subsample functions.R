@@ -40,13 +40,15 @@ sample_responses <- function(all_responses, ids, item) {
     filter(partID %in% ids)
 } 
 
-#' takes df of responses
+#' takes df of responses and item id
 #' returns a df of response counts
-sort_count <- function(resp) {
+sort_count <- function(resp, item) {
   d <- resp %>%
+    filter(TypeItem == item) %>% #TypeItem is file-specific
     group_by(Std) %>% #Std is file-specific
     summarise(count = n()) %>%
-    ungroup()
+    ungroup() %>%
+    mutate(TypeItem = item)
 } 
 
 #' takes df of sample responses   
