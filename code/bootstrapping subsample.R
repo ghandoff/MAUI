@@ -9,6 +9,7 @@ set.seed(1729)
 source('code/bootstrapping subsample functions.R')
 
 all_responses <- read_csv('data/Garrett Dissertation Data Answers Only.csv')
+all_responses <- sapply(all_responses$Std, tolower) #'need to convert standardized answers!
 
 #' part_flexbyitem is a P x item frame of flex scores
 #' crucially, NA means that the item was not completed by the P
@@ -23,22 +24,22 @@ holdout_nums <- part_flexbyitem %>%
 remains_flexbyitem <- part_flexbyitem %>%
   filter(!partID %in% holdout_nums$partID)
 
+items <- names(part_flexbyitem)[-1] #item names from frame
+N <- 100
+curve_formula <- formula(MAUI ~ ((d*(norm_rank)^g)/((d*(norm_rank)^g)+(1-norm_rank)^g)))
+
 #' creates entire list of bootstrapped partIDs
 #' note that not all of them have done all items
 boot_parts <- foreach(i = seq(100, 800, by=100), .combine='rbind') %do% boot_nums(remains_flexbyitem, i)
+boot_list <- bind_rows(holdout_nums, filter(boot_parts, n==0)) #participant IDs of holdout sample & resamples
+boot_items <- all_responses %>%
+  filter(partID %in% boot_list$partID) #'outputs all responses for all items on boot_list
+boot_itemcount <- boot_items %>%
+  split(.$TypeItem) %>%
+  map(~sort_count(.)) #'outputs response count for standardized responses in a list of each item
 
-
-
-
-N <- 100
-focal_item <- 'U1'
-curve_formula <- formula(MAUI ~ ((d*(norm_rank)^g)/((d*(norm_rank)^g)+(1-norm_rank)^g)))
-
-smpl <- sample_ids(remains_flexbyitem, focal_item, N) #outputs bootstrap partIDs
-boot_list <- bind_rows(holdout_nums, smpl) #participant IDs of holdout sample & resamples
-
-
-boot_items <- sample_responses(all_responses, boot_list$partID, focal_item) #outputs all responses in entire bootstrap sample
+boot_items <- sample_responses(all_responses, boot_list$partID, focal_item) #outputs all responses for all items
+#boot_items <- foreach(i = items) %dopar% sample_responses(all_responses, boot_list$partID, i) #outputs a list of dfs for each item
 boot_itemcount <- sort_count(boot_items) #outputs counts of bootstrap sample responses
 boot_ranks <- ranks(boot_itemcount, N) #outputs MAUI rank table of bootstrap sample responses
 boot_calcs <- item_calcs(boot_ranks) #outputs MAUI rank table with 0 and 1 points
