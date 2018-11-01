@@ -9,7 +9,8 @@ set.seed(1729)
 source('code/bootstrapping subsample functions.R')
 
 all_responses <- read_csv('data/Garrett Dissertation Data Answers Only.csv')
-all_responses <- sapply(all_responses$Std, tolower) #'need to convert standardized answers!
+all_responses$Std <- str_replace_all(all_responses$Std, "[^[:alnum:]]", " ") %>% #gets rid of non alphanumerics
+  tolower() #' turns everything to lowercase
 
 #' part_flexbyitem is a P x item frame of flex scores
 #' crucially, NA means that the item was not completed by the P
@@ -34,6 +35,7 @@ boot_parts <- foreach(i = seq(100, 800, by=100), .combine='rbind') %do% boot_num
 boot_list <- bind_rows(holdout_nums, filter(boot_parts, n==0)) #participant IDs of holdout sample & resamples
 boot_items <- all_responses %>%
   filter(partID %in% boot_list$partID) #'outputs all responses for all items on boot_list
+
 boot_itemcount <- boot_items %>%
   split(.$TypeItem) %>%
   map(~sort_count(.)) #'outputs response count for standardized responses in a list of each item
