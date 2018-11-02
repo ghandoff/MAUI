@@ -41,6 +41,8 @@ boot_response_scores <- foreach(i = items, .combine='rbind') %do% sort_count(boo
 boot_ranks <- foreach(i = items, .combine='rbind') %do% ranks(boot_response_scores, 100, i) #outputs MAUI rank table of bootstrap sample responses
 #boot_calcs <- item_calcs(boot_ranks) #outputs MAUI rank table with 0 and 1 points
 
+
+
 boot_response_scores <- foreach(i = items, .combine='rbind') %do% 
   append_scores(boot_response_scores, boot_ranks, i) #' appends scores
 
