@@ -53,8 +53,9 @@ sort_count <- function(resp, item) {
 
 #' takes df of sample responses   
 #' returns a df by rankwise scoring
-ranks <- function(resp, size) {
+ranks <- function(resp, size, item) {
   rnk <- resp %>%
+    filter(TypeItem == item) %>% #TypeItem is file-specific
     arrange(desc(count)) %>%
     mutate(cum = cumsum(count)) %>%
     group_by(count) %>%
@@ -62,10 +63,32 @@ ranks <- function(resp, size) {
               mass = n()) %>%
     mutate(mass = mass*count,
            MAUI = ((cumsum - mass) + (mass/2))/max(cumsum),
-           pct_giving = count/(size + 100)) %>%
+           pct_giving = count/size) %>%
     arrange(desc(count)) %>%
-    ungroup()
-}    
+    ungroup() %>%
+    mutate(TypeItem = item)
+} 
+
+append_scores <- function(resp, rnks, item) {
+  ranks <- rnks %>%
+    select(-cumsum, -mass)
+  appended <- resp %>%
+    filter(TypeItem == item) %>%
+    left_join(ranks)
+}
+
+p_score <- function(resp, scrs, item){
+  resp %>%
+    filter(TypeItem == item) %>%
+    left_join(scrs, by = 'Std') %>%
+    mutate(UI95 = ifelse(pct_giving <= .05, 1, 0)) %>%
+    group_by(partID) %>%
+    summarise(sum_MAUI = sum(MAUI),
+              avg_MAUI = mean(MAUI),
+              sum_UI95 = sum(UI95),
+              avg_UI95 = mean(UI95)) %>%
+    mutate(TypeItem = item)
+}
 
 #' frame for Gini & other calculations
 #' returns a df for calculating Gini & gamma/delta

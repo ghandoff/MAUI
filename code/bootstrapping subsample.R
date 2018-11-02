@@ -33,27 +33,19 @@ curve_formula <- formula(MAUI ~ ((d*(norm_rank)^g)/((d*(norm_rank)^g)+(1-norm_ra
 #' note that not all of them have done all items
 boot_parts <- foreach(i = seq(100, 800, by=100), .combine='rbind') %do% boot_nums(remains_flexbyitem, i)
 boot_list <- bind_rows(holdout_nums, filter(boot_parts, n==0)) #participant IDs of holdout sample & resamples
-boot_items <- all_responses %>%
+
+#' creates response tables
+boot_responses <- all_responses %>%
   filter(partID %in% boot_list$partID) #'outputs all responses for all items on boot_list
+boot_response_scores <- foreach(i = items, .combine='rbind') %do% sort_count(boot_responses, i) #' returns response count for standardized responses in a single df
+boot_ranks <- foreach(i = items, .combine='rbind') %do% ranks(boot_response_scores, 100, i) #outputs MAUI rank table of bootstrap sample responses
+#boot_calcs <- item_calcs(boot_ranks) #outputs MAUI rank table with 0 and 1 points
 
-boot_response_count <- foreach(i = items, .combine='rbind') %do% sort_count(boot_items, i) #' returns response count for standardized responses in a single df
+boot_response_scores <- foreach(i = items, .combine='rbind') %do% 
+  append_scores(boot_response_scores, boot_ranks, i) #' appends scores
 
-boot_items <- sample_responses(all_responses, boot_list$partID, focal_item) #outputs all responses for all items
-#boot_items <- foreach(i = items) %dopar% sample_responses(all_responses, boot_list$partID, i) #outputs a list of dfs for each item
-boot_response_count <- sort_count(boot_items) #outputs counts of bootstrap sample responses
-boot_ranks <- ranks(boot_response_count, N) #outputs MAUI rank table of bootstrap sample responses
-boot_calcs <- item_calcs(boot_ranks) #outputs MAUI rank table with 0 and 1 points
-
-boot_itemscores <- boot_response_count %>%
-  left_join(select(boot_ranks, -cumsum, -mass))
-boot_scores <- boot_items %>%
-  left_join(boot_itemscores, by = 'Std') %>%
-  mutate(UI95 = ifelse(pct_giving <= .05, 1, 0)) %>%
-  group_by(partID) %>%
-  summarise(sum_MAUI = sum(MAUI),
-            avg_MAUI = mean(MAUI),
-            sum_UI95 = sum(UI95),
-            avg_UI95 = mean(UI95))
+boot_participant_scores <- foreach(i = items, .combine='rbind') %do% 
+  p_score(boot_responses, boot_response_scores, i) #' calculates participant scores
 
 #' SAVE SMPL_RANKS HERE FOR GRAPHING
 #' ggplot(data = smpl_ranks, aes(x = MAUI, y = mass)) + geom_col() + xlim(0,1)
