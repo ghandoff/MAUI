@@ -31,12 +31,40 @@ remains_flexbyitem <- part_flexbyitem %>%
 #' note that not all of them have done all items
 #' This line should be changed if we don't want each resample to be fully random
 boot_parts <- foreach(i = seq(100, 800, by=100), .combine='rbind') %do% boot_nums(remains_flexbyitem, i)
+#' establishing participant list for scoring for loop
+target_parts <- mutate(target_sample, n = 100)
+remain_parts <- select(remains_flexbyitem, partID) %>% setdiff(target_sample) %>% mutate(n = 1000)
+boot_parts <- bind_rows(target_parts, boot_parts, remain_parts)
 
 #####
 # helper formulas, probably can be removed later
 items <- names(part_flexbyitem)[-1] #item names from frame
 N <- 100
 curve_formula <- formula(MAUI ~ ((d*(norm_rank)^g)/((d*(norm_rank)^g)+(1-norm_rank)^g)))
+
+#####
+# multiple output foreach from stackoverflow
+comb <- function(x, ...) {
+  lapply(seq_along(x),
+         function(i) c(x[[i]], lapply(list(...), function(y) y[[i]])))
+}
+
+oper <- foreach(i=1:10, .combine='comb', .multicombine=TRUE,
+                .init=list(list(), list())) %dopar% {
+                  list(i+2, i+3)
+                }
+
+oper1 <- oper[[1]]
+oper2 <- oper[[2]]
+
+#####
+# my adaptation 
+comb <- function(x, ...) {
+  lapply(seq_along(x),
+         function(i) c(x[[i]], lapply(list(...), function(y) y[[i]])))
+}
+
+score_frames <- foreach(i = c())
 
 #####
 # scoring of responses, probably will be turned into a function later

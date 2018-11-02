@@ -16,16 +16,16 @@ std_to_flextable <- function(resp, item_col, id_col, flex_col) {
 #' returns bootstrap size x (part ID, n) table
 boot_nums <- function(data, size) {
   data %>%
-  select(partID) %>%
-  sample_n(size, replace = FALSE) %>%
-  mutate(n = size)
+    select(partID) %>%
+    sample_n(size, replace = FALSE) %>%
+    mutate(n = size + 100)
 }
 
 #' takes frame, item id, and bootstrap size
 #' returns a column of partIDs in the bootstrap
 #' used if we need to ensure that the bootstrap sample has done the focal task
 sample_ids <- function(data, item, size) {
-  d <- data %>%
+  data %>%
     select(one_of(c('partID', item))) %>%
     na.omit() %>%
     select(partID) %>%
@@ -35,7 +35,7 @@ sample_ids <- function(data, item, size) {
 #' takes df, id list, and item id
 #' returns a df of responses for that item & P list
 sample_responses <- function(all_responses, ids, item) {
-  d <- all_responses %>%
+  all_responses %>%
     filter(TypeItem == item) %>% #TypeItem is file-specific
     filter(partID %in% ids)
 } 
@@ -43,7 +43,7 @@ sample_responses <- function(all_responses, ids, item) {
 #' takes df of responses and item id
 #' returns a df of response counts
 sort_count <- function(resp, item) {
-  d <- resp %>%
+  resp %>%
     filter(TypeItem == item) %>% #TypeItem is file-specific
     group_by(Std) %>% #Std is file-specific
     summarise(count = n()) %>%
@@ -54,7 +54,7 @@ sort_count <- function(resp, item) {
 #' takes df of sample responses   
 #' returns a df by rankwise scoring
 ranks <- function(resp, size, item) {
-  rnk <- resp %>%
+  resp %>%
     filter(TypeItem == item) %>% #TypeItem is file-specific
     arrange(desc(count)) %>%
     mutate(cum = cumsum(count)) %>%
@@ -93,7 +93,7 @@ p_score <- function(resp, scrs, item){
 #' frame for Gini & other calculations
 #' returns a df for calculating Gini & gamma/delta
 item_calcs <- function(rnk) {
-  item_calcs <- rnk %>%
+  rnk %>%
     add_row(MAUI = 1, .after = nrow(rnk)) %>%
     add_row(MAUI = 0, .before = 1) %>%
     rowid_to_column("rank") %>%
