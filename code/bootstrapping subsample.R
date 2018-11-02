@@ -20,17 +20,17 @@ part_flexbyitem <- std_to_flextable(all_responses, 'TypeItem', 'partID', 'FlexCa
 # Randomization for target & bootstrap samples
 # Also sets up dfs with bootstrap participants & their responses
 #' column of ID numbers in the target sample
-holdout_nums <- part_flexbyitem %>%
+target_sample <- part_flexbyitem %>%
   na.omit() %>% #' ensures target sample did all 9 items
   sample_n(100, replace = FALSE) %>%
   select(partID)
 #' P x item frame of those remaining
 remains_flexbyitem <- part_flexbyitem %>%
-  filter(!partID %in% holdout_nums$partID)
+  filter(!partID %in% target_sample$partID)
 #' creates entire list of bootstrapped partIDs
 #' note that not all of them have done all items
+#' This line should be changed if we don't want each resample to be fully random
 boot_parts <- foreach(i = seq(100, 800, by=100), .combine='rbind') %do% boot_nums(remains_flexbyitem, i)
-boot_list <- bind_rows(holdout_nums, filter(boot_parts, n==0)) #participant IDs of holdout sample & resamples
 
 #####
 # helper formulas, probably can be removed later
@@ -41,8 +41,9 @@ curve_formula <- formula(MAUI ~ ((d*(norm_rank)^g)/((d*(norm_rank)^g)+(1-norm_ra
 #####
 # scoring of responses, probably will be turned into a function later
 #' creates response tables
+ps_for_scoring <- bind_rows(target_sample, filter(boot_parts, n==0)) #participant IDs of holdout sample & resamples, n==0 is just target sample
 boot_responses <- all_responses %>%
-  filter(partID %in% boot_list$partID) #'outputs all responses for all items on boot_list
+  filter(partID %in% ps_for_scoring$partID) #'outputs all responses for all items on ps_for_scoring
 boot_response_scores <- foreach(i = items, .combine='rbind') %do% sort_count(boot_responses, i) #' returns response count for standardized responses in a single df
 boot_ranks <- foreach(i = items, .combine='rbind') %do% ranks(boot_response_scores, 100, i) #outputs MAUI rank table of bootstrap sample responses
 #boot_calcs <- item_calcs(boot_ranks) #outputs MAUI rank table with 0 and 1 points
@@ -65,7 +66,7 @@ boot_participant_scores <- foreach(i = items, .combine='rbind') %do%
 #FIT GAMMA AND DELTA HERE
 fit <- nls(curve_formula, smpl_calcs, start = list(d = .5, g = .6))
 
-s <- filter(all_responses, partID == holdout_nums$partID[1] & TypeItem == 'U1')
+s <- filter(all_responses, partID == target_sample$partID[1] & TypeItem == 'U1')
 new <- smpl_itemcount 
 
 
