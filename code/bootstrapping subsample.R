@@ -43,28 +43,36 @@ N <- 100
 curve_formula <- formula(MAUI ~ ((d*(norm_rank)^g)/((d*(norm_rank)^g)+(1-norm_rank)^g)))
 
 #####
-# multiple output foreach from stackoverflow
+# scoring functionality!
+
+#' custom function to combine results from for loop
 comb <- function(x, ...) {
   lapply(seq_along(x),
          function(i) c(x[[i]], lapply(list(...), function(y) y[[i]])))
 }
 
-oper <- foreach(i=1:10, .combine='comb', .multicombine=TRUE,
-                .init=list(list(), list())) %dopar% {
-                  list(i+2, i+3)
-                }
+#' score_frames returns 2 lists
+#' list 1 is a list of 10 response-level tibbles, 1 for each resample N
+#' list 2 is a list of 10 participant-level tibbles, 1 for each resample N
+score_frames <- foreach(i=seq(100, 1000, by=100), .combine='comb', .multicombine=TRUE,
+                        .init=list(list(), list())) %dopar% {
+                          
+                          ps_for_scoring <- bind_rows(target_sample, filter(boot_parts, n==i | n==100)) #participant IDs of holdout sample & resamples
+                          boot_responses <- all_responses %>%
+                            filter(partID %in% ps_for_scoring$partID) #'outputs all responses for all items on ps_for_scoring
+                          boot_response_scores <- foreach(j = items, .combine='rbind') %do% sort_count(boot_responses, j) #' returns response count for standardized responses in a single df
+                          boot_ranks <- foreach(k = items, .combine='rbind') %do% ranks(boot_response_scores, i, k) #outputs MAUI rank table of bootstrap sample responses
+                          #boot_calcs <- item_calcs(boot_ranks) #outputs MAUI rank table with 0 and 1 points
+                          
+                          boot_response_scores <- foreach(l = items, .combine='rbind') %do% 
+                            append_scores(boot_response_scores, boot_ranks, l) #' appends scores
+                          
+                          boot_participant_scores <- foreach(m = items, .combine='rbind') %do% 
+                            p_score(boot_responses, boot_response_scores, m) #' calculates participant scores
+                          list(boot_response_scores, boot_participant_scores)
+                        }
+#' to do: merge lists into 2 dfs from which to analyze and graph
 
-oper1 <- oper[[1]]
-oper2 <- oper[[2]]
-
-#####
-# my adaptation 
-comb <- function(x, ...) {
-  lapply(seq_along(x),
-         function(i) c(x[[i]], lapply(list(...), function(y) y[[i]])))
-}
-
-score_frames <- foreach(i = c())
 
 #####
 # scoring of responses, probably will be turned into a function later
