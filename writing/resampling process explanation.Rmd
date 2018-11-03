@@ -1,0 +1,22 @@
+---
+title: "resampling process explanation"
+author: "Zach Burns"
+date: "November 2, 2018"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Resampling Strategy
+
+We wanted to see how each scoring metric performed in different sample conditions. We are primarily interested in how stable the metrics are across sample sizes.
+
+We wrote a program that... {does stuff}
+
+Our dataset includes nearly 1000 participants who did nine different divergent thinking tasks. The program first selected 100 random participants as the target sample, all of whom completed all nine tasks. Their results can be seen in {table/figure reference} and establish a benchmark for comparison with the results that follow.
+
+The program then randomly selected participants from the remaining pool in increments of 100. That is, the results in {table/figure reference} from the second row and on represent the results of simulated samples of the target sample + 100, the target sample + 200, etc. Note that each increasing resample is randomly selected, and as such aren't necessarily the same participants as smaller resamples (except for the target sample, which is included in each resample).
+
+The program finally calculates the scores of these resamples. We present the results in three figures: {item figure} is a visualization of scores for the responses on a single item, across all participants; {participant figure} is a visualization of the scores for all participants on a single item; {third one} is and I forget the third, shoutout to Perry. Each graph represents the results of a particular resample size (e.g. target + 200) for a particular item (e.g. "Uses" task #1).
