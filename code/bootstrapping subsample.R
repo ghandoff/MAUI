@@ -57,19 +57,24 @@ score_frames <- foreach(i=seq(100, 1000, by=100), .combine='comb', .multicombine
                           ps_for_scoring <- bind_rows(target_sample, filter(boot_parts, n==i | n==100)) #participant IDs of holdout sample & resamples
                           boot_responses <- all_responses %>%
                             filter(partID %in% ps_for_scoring$partID) #'outputs all responses for all items on ps_for_scoring
-                          boot_response_scores <- foreach(j = items, .combine='rbind') %do% sort_count(boot_responses, j) #' returns response count for standardized responses in a single df
-                          boot_ranks <- foreach(k = items, .combine='rbind') %do% ranks(boot_response_scores, i, k) #outputs MAUI rank table of bootstrap sample responses
-                          #boot_calcs <- item_calcs(boot_ranks) #outputs MAUI rank table with 0 and 1 points
+                          boot_response_scores <- foreach(j = items, .combine='rbind') %do%
+                            sort_count(boot_responses, j) #' returns response count for standardized responses in a single df
+                          boot_ranks <- foreach(k = items, .combine='rbind') %do%
+                            ranks(boot_response_scores, i, k) %>% #outputs MAUI rank table of bootstrap sample responses
+                            item_calcs() #outputs MAUI rank table with 0 and 1 points
                           
                           boot_response_scores <- foreach(l = items, .combine='rbind') %do% 
                             append_scores(boot_response_scores, boot_ranks, l) %>% #' appends scores
+                            mutate(sample_size = as.integer(i)) #' adds indicator of bootstrap size; not important for public use tool
+                          
+                          boot_response_freq <- boot_ranks %>%
                             mutate(sample_size = as.integer(i)) #' adds indicator of bootstrap size; not important for public use tool
                           
                           boot_participant_scores <- foreach(m = items, .combine='rbind') %do% 
                             p_score(boot_responses, boot_response_scores, m) %>% #' calculates participant scores
                             mutate(sample_size = as.integer(i)) #' adds indicator of bootstrap size; not important for public use tool
                           
-                          list(boot_response_scores, boot_participant_scores)
+                          list(boot_response_freq, boot_participant_scores)
                         }
 
 #' score_frames is a list of 2 tibbles
