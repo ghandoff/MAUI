@@ -26,15 +26,15 @@ target_sample <- part_fluency_byitem %>%
   sample_n(100, replace = FALSE) %>%
   select(partID)
 #' P x item frame of those remaining
-remains_flexbyitem <- part_fluency_byitem %>%
+remains_fluency_byitem <- part_fluency_byitem %>%
   filter(!partID %in% target_sample$partID)
 #' creates entire list of bootstrapped partIDs
 #' note that not all of them have done all items
 #' This line should be changed if we don't want each resample to be fully random
-boot_parts <- foreach(i = seq(100, 800, by=100), .combine='rbind') %do% boot_nums(remains_flexbyitem, i)
+boot_parts <- foreach(i = seq(100, 800, by=100), .combine='rbind') %do% boot_nums(remains_fluency_byitem, i)
 #' establishing participant list for scoring for loop
 target_parts <- mutate(target_sample, n = 100)
-remain_parts <- select(remains_flexbyitem, partID) %>% setdiff(target_sample) %>% mutate(n = 1000)
+remain_parts <- select(remains_fluency_byitem, partID) %>% setdiff(target_sample) %>% mutate(n = 1000)
 boot_parts <- bind_rows(target_parts, boot_parts, remain_parts)
 
 items <- names(part_fluency_byitem)[-1] #item names from frame
