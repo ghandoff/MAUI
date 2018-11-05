@@ -60,8 +60,8 @@ score_frames <- foreach(i=seq(100, 1000, by=100), .combine='comb', .multicombine
                           boot_response_scores <- foreach(j = items, .combine='rbind') %do%
                             sort_count(boot_responses, j) #' returns response count for standardized responses in a single df
                           boot_ranks <- foreach(k = items, .combine='rbind') %do%
-                            ranks(boot_response_scores, i, k) %>% #outputs MAUI rank table of bootstrap sample responses
-                            item_calcs() #outputs MAUI rank table with 0 and 1 points
+                            ranks(boot_response_scores, i, k) #outputs MAUI rank table of bootstrap sample responses
+                            #item_calcs() #outputs MAUI rank table with 0 and 1 points
                           
                           boot_response_scores <- foreach(l = items, .combine='rbind') %do% 
                             append_scores(boot_response_scores, boot_ranks, l) %>% #' appends scores
