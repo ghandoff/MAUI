@@ -70,9 +70,14 @@ score_frames <- foreach(i=seq(100, 1000, by=100), .combine='comb', .multicombine
                           
                           boot_participant_scores <- foreach(m = items, .combine='rbind') %do% 
                             p_score(boot_responses, boot_response_scores, m) #' calculates participant scores
-                          list(bind_rows(boot_response_scores), bind_rows(boot_participant_scores))
+                          list(boot_response_scores, boot_participant_scores)
                         }
-#' to do: merge lists into 2 dfs from which to analyze and graph
+
+#' score_frames is a list of 2 tibbles
+#' [[1]] is all the item scores, [[2]] is all the participant scores
+score_frames[[1]] <- bind_rows(score_frames[[1]])
+score_frames[[2]] <- bind_rows(score_frames[[2]])
+names(score_frames) <- c('item_scores', 'participant_scores')
 
 
 #####
