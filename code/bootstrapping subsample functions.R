@@ -1,5 +1,5 @@
 #' takes entire P x (ID, Type, Response, Std, FlexCat) frame
-#' returns P x item fram of fluency scores
+#' returns P x item frame of fluency scores
 std_to_fluency_table <- function(resp, item_col, id_col, resp_col) {
   item <- enquo(item_col)
   id <- enquo(id_col)
