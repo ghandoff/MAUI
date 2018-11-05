@@ -63,11 +63,11 @@ score_frames <- foreach(i=seq(100, 1000, by=100), .combine='comb', .multicombine
                           
                           boot_response_scores <- foreach(l = items, .combine='rbind') %do% 
                             append_scores(boot_response_scores, boot_ranks, l) %>% #' appends scores
-                            mutate(sample_size = i) #' adds indicator of bootstrap size; not important for public use tool
+                            mutate(sample_size = as.integer(i)) #' adds indicator of bootstrap size; not important for public use tool
                           
                           boot_participant_scores <- foreach(m = items, .combine='rbind') %do% 
                             p_score(boot_responses, boot_response_scores, m) %>% #' calculates participant scores
-                            mutate(sample_size = i) #' adds indicator of bootstrap size; not important for public use tool
+                            mutate(sample_size = as.integer(i)) #' adds indicator of bootstrap size; not important for public use tool
                           
                           list(boot_response_scores, boot_participant_scores)
                         }
