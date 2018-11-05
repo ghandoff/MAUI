@@ -4,7 +4,7 @@ library(foreach)
 library(tidyverse)
 library(readxl)
 
-set.seed(1729)
+set.seed(1729) #' 91 works too, but is less interesting.
 
 source('code/bootstrapping subsample functions.R')
 
@@ -15,7 +15,7 @@ all_responses$Std <- str_replace_all(all_responses$Std, "[^[:alnum:]]", " ") %>%
   tolower() #' turns everything to lowercase
 #' part_flexbyitem is a P x item frame of flex scores
 #' crucially, NA means that the item was not completed by the P
-part_flexbyitem <- std_to_flextable(all_responses, 'TypeItem', 'partID', 'FlexCat')
+part_flexbyitem <- std_to_fluency_table(all_responses, 'TypeItem', 'partID', 'Std')
 
 #####
 # Randomization for target & bootstrap samples
@@ -37,11 +37,7 @@ target_parts <- mutate(target_sample, n = 100)
 remain_parts <- select(remains_flexbyitem, partID) %>% setdiff(target_sample) %>% mutate(n = 1000)
 boot_parts <- bind_rows(target_parts, boot_parts, remain_parts)
 
-#####
-# helper formulas, probably can be removed later
 items <- names(part_flexbyitem)[-1] #item names from frame
-N <- 100
-curve_formula <- formula(MAUI ~ ((d*(norm_rank)^g)/((d*(norm_rank)^g)+(1-norm_rank)^g)))
 
 #####
 # scoring functionality!
@@ -78,54 +74,3 @@ score_frames <- foreach(i=seq(100, 1000, by=100), .combine='comb', .multicombine
 score_frames[[1]] <- bind_rows(score_frames[[1]])
 score_frames[[2]] <- bind_rows(score_frames[[2]])
 names(score_frames) <- c('item_scores', 'participant_scores')
-
-
-#####
-# scoring of responses, probably will be turned into a function later
-#' creates response tables
-ps_for_scoring <- bind_rows(target_sample, filter(boot_parts, n==0)) #participant IDs of holdout sample & resamples, n==0 is just target sample
-boot_responses <- all_responses %>%
-  filter(partID %in% ps_for_scoring$partID) #'outputs all responses for all items on ps_for_scoring
-boot_response_scores <- foreach(i = items, .combine='rbind') %do% sort_count(boot_responses, i) #' returns response count for standardized responses in a single df
-boot_ranks <- foreach(i = items, .combine='rbind') %do% ranks(boot_response_scores, 100, i) #outputs MAUI rank table of bootstrap sample responses
-#boot_calcs <- item_calcs(boot_ranks) #outputs MAUI rank table with 0 and 1 points
-
-boot_response_scores <- foreach(i = items, .combine='rbind') %do% 
-  append_scores(boot_response_scores, boot_ranks, i) #' appends scores
-
-boot_participant_scores <- foreach(i = items, .combine='rbind') %do% 
-  p_score(boot_responses, boot_response_scores, i) #' calculates participant scores
-
-
-#####
-
-
-
-#' SAVE SMPL_RANKS HERE FOR GRAPHING
-#' ggplot(data = smpl_ranks, aes(x = MAUI, y = mass)) + geom_col() + xlim(0,1)
-#' ggplot(data = smpl_ranks, aes(x = 1-pct_giving, y = mass)) + geom_col() + geom_vline(aes(xintercept = .95)) + xlim(0,1)
-#' 
-#FIT GAMMA AND DELTA HERE
-fit <- nls(curve_formula, smpl_calcs, start = list(d = .5, g = .6))
-
-s <- filter(all_responses, partID == target_sample$partID[1] & TypeItem == 'U1')
-new <- smpl_itemcount 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
