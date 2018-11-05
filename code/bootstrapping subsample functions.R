@@ -40,7 +40,7 @@ sample_responses <- function(all_responses, ids, item) {
     filter(partID %in% ids)
 } 
 
-#' takes df of responses and item id
+#' takes df of responses item id
 #' returns a df of response counts
 sort_count <- function(resp, item) {
   resp %>%
