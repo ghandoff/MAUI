@@ -1,4 +1,5 @@
 library(openxlsx)
+library(doParallel)
 library(foreach)
 library(tidyverse)
 library(readxl)
