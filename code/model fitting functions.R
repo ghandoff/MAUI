@@ -4,7 +4,7 @@ sort_count <- function(resp, item) {
   resp %>%
     filter(TypeItem == item) %>% #TypeItem is file-specific
     group_by(count) %>%
-    summarise(count = n()) %>%
+    summarise(frequency = n()) %>%
     ungroup() %>%
     mutate(TypeItem = item)
 } 

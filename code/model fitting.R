@@ -1,3 +1,19 @@
+library(foreach)
+library(tidyverse)
+library(readxl)
+
+source('code/model fitting functions.R')
+
+##### 
+# Set up/load files
+item_scores <- read_csv('data/dissertation item scores.csv')
+participant_scores <- read_csv('data/dissertation participant scores.csv')
+
+items <- unique(item_scores$TypeItem) #item names from frame
+item_densities <- foreach(i=items, .combine='rbind') %do% sort_count(item_scores, i)
+
+
+
 curve_formula <- formula(MAUI ~ ((d*(norm_rank)^g)/((d*(norm_rank)^g)+(1-norm_rank)^g)))
 
 
