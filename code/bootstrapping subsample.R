@@ -81,4 +81,4 @@ score_frames <- foreach(i=seq(100, 1000, by=100), .combine='comb', .multicombine
 #' [[1]] is all the item scores, [[2]] is all the participant scores
 score_frames[[1]] <- bind_rows(score_frames[[1]])
 score_frames[[2]] <- bind_rows(score_frames[[2]])
-names(score_frames) <- c('item_scores', 'participant_scores')
+names(score_frames) <- c('score_frequencies', 'participant_scores')
