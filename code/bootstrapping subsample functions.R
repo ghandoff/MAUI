@@ -1,14 +1,14 @@
 #' takes entire P x (ID, Type, Response, Std, FlexCat) frame
-#' returns P x item fram of flex scores
-std_to_flextable <- function(resp, item_col, id_col, flex_col) {
+#' returns P x item frame of fluency scores
+std_to_fluency_table <- function(resp, item_col, id_col, resp_col) {
   item <- enquo(item_col)
   id <- enquo(id_col)
-  flex <- enquo(flex_col)
+  responses <- enquo(resp_col)
   tbl <- all_responses %>%
-    select(one_of(c(!!item, !!id, !!flex))) %>%
+    select(one_of(c(!!item, !!id, !!responses))) %>%
     group_by_at(vars(one_of(c(!!id, !!item)))) %>%
-    summarise(flexibility = n()) %>%
-    spread(!!item, flexibility) %>%
+    summarise(fluency = n()) %>%
+    spread(!!item, fluency) %>%
     ungroup()
 }
 
@@ -40,7 +40,7 @@ sample_responses <- function(all_responses, ids, item) {
     filter(partID %in% ids)
 } 
 
-#' takes df of responses and item id
+#' takes df of responses item id
 #' returns a df of response counts
 sort_count <- function(resp, item) {
   resp %>%
@@ -101,3 +101,20 @@ item_calcs <- function(rnk) {
     mutate(norm_rank = rank/max(rank))
 }
 
+
+##### deprecated, delete eventually
+
+#' takes entire P x (ID, Type, Response, Std, FlexCat) frame
+#' returns P x item fram of flex scores
+#' 
+# std_to_flextable <- function(resp, item_col, id_col, flex_col) {
+#   item <- enquo(item_col)
+#   id <- enquo(id_col)
+#   flex <- enquo(flex_col)
+#   tbl <- all_responses %>%
+#     select(one_of(c(!!item, !!id, !!flex))) %>%
+#     group_by_at(vars(one_of(c(!!id, !!item)))) %>%
+#     summarise(flexibility = n()) %>%
+#     spread(!!item, flexibility) %>%
+#     ungroup()
+# }
