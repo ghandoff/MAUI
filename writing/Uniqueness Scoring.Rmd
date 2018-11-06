@@ -3,9 +3,9 @@ title: "Uniqueness Metrics Outline"
 author: "Zach Burns"
 date: "June 29, 2017"
 output:
+  pdf_document: default
   word_document:
     reference_docx: word-styles-default.docx
-  pdf_document: default
   html_document: default
 ---
 
