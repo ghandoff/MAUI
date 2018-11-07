@@ -3,9 +3,9 @@ title: "Uniqueness Metrics Outline"
 author: "Zach Burns"
 date: "June 29, 2017"
 output:
-  pdf_document: default
   word_document:
     reference_docx: word-styles-default.docx
+  pdf_document: default
   html_document: default
 ---
 
@@ -30,10 +30,10 @@ knitr::opts_chunk$set(echo = TRUE)
 ## Aside on Standardization
 Open-ended creativity tasks provide a challenge to creativity research. In particular, scoring response uniqueness necessitates a round of standardization prior to calculation of any uniqueness metric. Analyses may then be performed the tally how many other participants gave the same standardized answers. This standardization process is performed only lightly to distinguish it from the relatively heavier standardization of grouping every response into an a priori known lexical category. For example, if the prompt is "name all the uses you can think of for a brick," "break car window" and "break automobile window" would likely be standardized to the same response. However, neither of these would be standardized to a conceptually similar response ("break truck window"), a more specific version of the same response ("break car window to steal stereo"), or a less specific version of the same response ("break window").
 
-One might be tempted to solve this problem by any number of standard solutions used to boost inter-rater reliability of qualitatively coded data. Additional training of coders might improve standardized sets, but given that the responses are scored for uniqueness, better responses are less likely to be seen in training sets by definition. Having multiple coders who must agree could potentially improve agreement, but will still be based on the particular sample, and not applicable across samples (e.g., coders may agree that breaking a truck window and car window are the same in one sample and not another). Therefore, we have developed a protocol for coders that includes a ranked list of most commonly given synonyms (e.g., car, automobile, auto) for each DT task item to be standardized into a singularly representative term (e.g., car).
+One might be tempted to solve this problem by any number of standard solutions used to boost inter-rater reliability of qualitatively coded data. Additional training of coders might improve standardized sets, but given that the responses are scored for uniqueness, better responses are less likely to be seen in training sets by definition. Having multiple coders who must agree could potentially improve agreement, but will still be based on the particular sample, and not applicable across samples (e.g., coders may agree that breaking a truck window and car window are the same in one sample and not another). Therefore, we have developed a protocol for coders that includes a ranked list of most commonly given synonyms (e.g., car, automobile, auto) for each DT task item to be standardized into a singularly representative term (e.g., car). Another common literary device worth standardization are direct (the) and indirect (an) identifiers that are superfluous for our needs. We applied text analysis techniques to identify and remove the identifiers throughout, and an duplicate-seeking algorithm provides frequency counts for each singlet--a unique, standardized response within a given sample.
 
 ## Response Frequency and Density
-Even with better standardization, the resulting set of standardized responses will generally include a great number of responses given by only a single participant. There are likely to be a large number of somewhat esoteric (and possibly invalid) responses. In the samples we've observed, singlets account for 20% - 30% of all responses given regardless of sample size:
+Even with better standardization, the resulting set of standardized responses will generally include a great number of responses given by only a single participant. There are likely to be a small number of somewhat esoteric (and possibly irrelevant) responses, which, if removed, would introduce subjective evaluation of relevance to a nonsignificant number of response. In the samples we've observed, singlets account for 20% - 30% of all responses given regardless of sample size:
 
 (some graphs here: x-axis = normalized response frequency rank in sample (from most to least frequent); y-axis = count of reponses)
 
