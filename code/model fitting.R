@@ -52,16 +52,52 @@ MAUI_item_hist <- qplot(MAUI, data=item_densities, weight=mass, geom="histogram"
   facet_grid(sample_size ~ TypeItem)
 
 # UI95_item_hist is basically identical to the step plot, as it only takes 2 values
+#####
+# from stack overflow:
+dd <- data.frame(
+  predicted = rnorm(72, mean = 2, sd = 2),
+  state = rep(c("A", "B", "C"), each = 24)
+) 
+
+grid <- with(dd, seq(min(predicted), max(predicted), length = 100))
+normaldens <- plyr::ddply(dd, "state", function(df) {
+  data.frame( 
+    predicted = grid,
+    density = dnorm(grid, mean(df$predicted), sd(df$predicted))
+  )
+})
+
+ggplot(dd, aes(predicted))  + 
+  geom_density() + 
+  geom_line(aes(y = density), data = normaldens, colour = "red") +
+  facet_wrap(~ state) 
+
+
 
 #####
 # makes calcs for and graphs participant score histograms
+MAUI_grid <- with(participant_scores, seq(min(sum_MAUI), max(sum_MAUI), length = 100))
+MAUI_normaldens <- ddply(dd, "state", function(df) {
+  data.frame( 
+    predicted = grid,
+    density = dnorm(grid, mean(df$predicted), sd(df$predicted))
+  )
+})
+
 MAUI_participant_hist <- ggplot(data = participant_scores, aes(sum_MAUI)) +
-  geom_histogram() +
+  geom_histogram(binwidth=2) +
+  stat_function(fun=dnorm,
+                color="red",
+                args=list(mean=mean(participant_scores$sum_MAUI), 
+                          sd=sd(participant_scores$sum_MAUI))) +
   facet_grid(sample_size ~ TypeItem)
 
 UI95_participant_hist <- ggplot(data = participant_scores, aes(sum_UI95)) +
-  geom_histogram() +
+  geom_histogram(binwidth=2) +
   facet_grid(sample_size ~ TypeItem)
+
+joint_partipant_hist <- ggplot(data=participant_scores) +
+  geom_histogram(aes(sum_MAUI), binwidth=2) +
 
 #####
 # target sample vizualizations
