@@ -1,3 +1,4 @@
+library(MASS)
 library(foreach)
 library(tidyverse)
 library(readxl)
@@ -52,44 +53,28 @@ MAUI_item_hist <- qplot(MAUI, data=item_densities, weight=mass, geom="histogram"
   facet_grid(sample_size ~ TypeItem)
 
 # UI95_item_hist is basically identical to the step plot, as it only takes 2 values
-#####
-# from stack overflow:
-dd <- data.frame(
-  predicted = rnorm(72, mean = 2, sd = 2),
-  state = rep(c("A", "B", "C"), each = 24)
-) 
-
-grid <- with(dd, seq(min(predicted), max(predicted), length = 100))
-normaldens <- plyr::ddply(dd, "state", function(df) {
-  data.frame( 
-    predicted = grid,
-    density = dnorm(grid, mean(df$predicted), sd(df$predicted))
-  )
-})
-
-ggplot(dd, aes(predicted))  + 
-  geom_density() + 
-  geom_line(aes(y = density), data = normaldens, colour = "red") +
-  facet_wrap(~ state) 
-
-
 
 #####
 # makes calcs for and graphs participant score histograms
+
+#' normal curve generation
 MAUI_grid <- with(participant_scores, seq(min(sum_MAUI), max(sum_MAUI), length = 100))
-MAUI_normaldens <- ddply(dd, "state", function(df) {
-  data.frame( 
-    predicted = grid,
-    density = dnorm(grid, mean(df$predicted), sd(df$predicted))
-  )
-})
+
+MAUI_normdens <- participant_scores %>%
+  select(one_of(c('sum_MAUI', 'TypeItem', 'sample_size'))) %>%
+  group_by_at(vars(one_of('TypeItem', 'sample_size'))) %>%
+  do(data.frame(sum_MAUI = MAUI_grid,  density = dnorm(MAUI_grid, mean(.$sum_MAUI), sd(.$sum_MAUI))))
+
+#####
+# I think the Weibull distribution is going to serve us better, or maybe some sort of generalized Gamma
+MAUI_weibull <- participant_scores %>%
+  select(one_of(c('sum_MAUI', 'TypeItem', 'sample_size'))) %>%
+  group_by_at(vars(one_of('TypeItem', 'sample_size'))) %>%
+  summarise(fit = fitdistr(.$sum_MAUI, 'weibull'))
 
 MAUI_participant_hist <- ggplot(data = participant_scores, aes(sum_MAUI)) +
-  geom_histogram(binwidth=2) +
-  stat_function(fun=dnorm,
-                color="red",
-                args=list(mean=mean(participant_scores$sum_MAUI), 
-                          sd=sd(participant_scores$sum_MAUI))) +
+  geom_density() +
+  geom_line(data=MAUI_normdens, aes(y=density), colour='red') +
   facet_grid(sample_size ~ TypeItem)
 
 UI95_participant_hist <- ggplot(data = participant_scores, aes(sum_UI95)) +
