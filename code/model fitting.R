@@ -58,36 +58,14 @@ MAUI_item_hist <- qplot(MAUI, data=item_densities, weight=mass, geom="histogram"
 # makes calcs for and graphs participant score histograms
 
 #' normal curve generation
-MAUI_grid <- with(participant_scores, seq(min(sum_MAUI), max(sum_MAUI), length = 100))
+MAUI_grid <- with(participant_scores, seq(min(top5_MAUI), max(top5_MAUI), length = 100))
 
 MAUI_normdens <- participant_scores %>%
-  select(one_of(c('sum_MAUI', 'TypeItem', 'sample_size'))) %>%
+  select(one_of(c('top5_MAUI', 'TypeItem', 'sample_size'))) %>%
   group_by_at(vars(one_of('TypeItem', 'sample_size'))) %>%
-  do(data.frame(sum_MAUI = MAUI_grid,  density = dnorm(MAUI_grid, mean(.$sum_MAUI), sd(.$sum_MAUI))))
+  do(data.frame(top5_MAUI = MAUI_grid,  density = dnorm(MAUI_grid, mean(.$top5_MAUI), sd(.$top5_MAUI))))
 
-#####
-# I think the Weibull distribution is going to serve us better, or maybe some sort of generalized Gamma
-#' from stack overflow
-#' https://stackoverflow.com/questions/45654264/apply-massfitdistr-to-multiple-data-by-a-factor
-#' 
-getAlphaEstimate = function(x) {MASS::fitdistr(x, 'weibull')$estimate[1]}
-
-getBetaEstimate = function(x) {MASS::fitdistr(x, 'weibull')$estimate[2]}
-
-MAUI_parameters <- participant_scores %>%
-  select(one_of(c('sum_MAUI', 'TypeItem', 'sample_size'))) %>%
-  group_by_at(vars(one_of('TypeItem', 'sample_size'))) %>%
-  summarise(alpha = getAlphaEstimate(sum_MAUI),
-            beta = getBetaEstimate(sum_MAUI))
-
-#'
-
-MAUI_weibull <- participant_scores %>%
-  select(one_of(c('sum_MAUI', 'TypeItem', 'sample_size'))) %>%
-  group_by_at(vars(one_of('TypeItem', 'sample_size'))) %>%
-  do(data.frame(sum_MAUI = MAUI_grid, density = dweibull(MAUI_grid, shape = sth, sd(.$sum_MAUI)))))
-
-MAUI_participant_hist <- ggplot(data = participant_scores, aes(sum_MAUI)) +
+MAUI_participant_hist <- ggplot(data = participant_scores, aes(top5_MAUI)) +
   geom_density() +
   geom_line(data=MAUI_normdens, aes(y=density), colour='red') +
   facet_grid(sample_size ~ TypeItem)
