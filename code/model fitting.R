@@ -67,10 +67,25 @@ MAUI_normdens <- participant_scores %>%
 
 #####
 # I think the Weibull distribution is going to serve us better, or maybe some sort of generalized Gamma
+#' from stack overflow
+#' https://stackoverflow.com/questions/45654264/apply-massfitdistr-to-multiple-data-by-a-factor
+#' 
+getAlphaEstimate = function(x) {MASS::fitdistr(x, 'weibull')$estimate[1]}
+
+getBetaEstimate = function(x) {MASS::fitdistr(x, 'weibull')$estimate[2]}
+
+MAUI_parameters <- participant_scores %>%
+  select(one_of(c('sum_MAUI', 'TypeItem', 'sample_size'))) %>%
+  group_by_at(vars(one_of('TypeItem', 'sample_size'))) %>%
+  summarise(alpha = getAlphaEstimate(sum_MAUI),
+            beta = getBetaEstimate(sum_MAUI))
+
+#'
+
 MAUI_weibull <- participant_scores %>%
   select(one_of(c('sum_MAUI', 'TypeItem', 'sample_size'))) %>%
   group_by_at(vars(one_of('TypeItem', 'sample_size'))) %>%
-  summarise(fit = fitdistr(.$sum_MAUI, 'weibull'))
+  do(data.frame(sum_MAUI = MAUI_grid, density = dweibull(MAUI_grid, shape = sth, sd(.$sum_MAUI)))))
 
 MAUI_participant_hist <- ggplot(data = participant_scores, aes(sum_MAUI)) +
   geom_density() +
