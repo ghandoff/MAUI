@@ -70,21 +70,43 @@ MAUI_participant_hist <- ggplot(data = participant_scores, aes(top5_MAUI)) +
   geom_line(data=MAUI_normdens, aes(y=density), colour='red') +
   facet_grid(sample_size ~ TypeItem)
 
-UI95_participant_hist <- ggplot(data = participant_scores, aes(sum_UI95)) +
-  geom_histogram(binwidth=2) +
+pct_grid <- with(participant_scores, seq(min(top5_pct), max(top5_pct), length = 100))
+
+pct_normdens <- participant_scores %>%
+  select(one_of(c('top5_pct', 'TypeItem', 'sample_size'))) %>%
+  group_by_at(vars(one_of('TypeItem', 'sample_size'))) %>%
+  do(data.frame(top5_pct = pct_grid,  density = dnorm(pct_grid, mean(.$top5_pct), sd(.$top5_pct))))
+
+pct_participant_hist <- ggplot(data = participant_scores, aes(top5_pct)) +
+  geom_density() +
+  geom_line(data=pct_normdens, aes(y=density), colour='red') +
   facet_grid(sample_size ~ TypeItem)
 
-joint_partipant_hist <- ggplot(data=participant_scores) +
-  geom_histogram(aes(sum_MAUI), binwidth=2) +
+UI95_grid <- with(participant_scores, seq(min(sum_UI95), max(sum_UI95), length = 100))
+
+UI95_normdens <- participant_scores %>%
+  select(one_of(c('sum_UI95', 'TypeItem', 'sample_size'))) %>%
+  group_by_at(vars(one_of('TypeItem', 'sample_size'))) %>%
+  do(data.frame(sum_UI95 = UI95_grid,  density = dnorm(UI95_grid, mean(.$sum_UI95), sd(.$sum_UI95))))
+
+UI95_participant_hist <- ggplot(data = participant_scores, aes(sum_UI95)) +
+  geom_density() +
+  geom_line(data=UI95_normdens, aes(y=density), colour='red') +
+  facet_grid(sample_size ~ TypeItem)
 
 #####
 # target sample vizualizations
-MAUI_target_hist <- ggplot(data = target_scores, aes(sum_MAUI)) +
-  geom_histogram() +
+# not nearly as striking as I thought it would be
+MAUI_target_hist <- ggplot(data = target_scores, aes(top5_MAUI)) +
+  geom_density() +
   facet_grid(sample_size ~ TypeItem)
 
 UI95_target_hist <- ggplot(data = target_scores, aes(sum_UI95)) +
-  geom_histogram() +
+  geom_density() +
+  facet_grid(sample_size ~ TypeItem)
+
+pct_target_hist <- ggplot(data = target_scores, aes(top5_pct)) +
+  geom_density() +
   facet_grid(sample_size ~ TypeItem)
 
 target_scores_summary <- target_scores %>%
