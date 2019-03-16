@@ -1,0 +1,12 @@
+---
+title: "explanation of uniqueness"
+author: "Zach Burns"
+date: "December 4, 2018"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+One aspect 
