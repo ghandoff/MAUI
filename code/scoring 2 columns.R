@@ -14,6 +14,7 @@ raw <- read_csv('data/test data.csv')
 n <- length(unique(raw$participant)) #' calculates number of participants
 
 UI_thresh <- .95 #' the 'old UI' threshhold, default at 95%
+top_x <- 5 #' how many of the highest MAUI scores to use for the top X score
 
 #' freq_table holds standardized responses and the frequency they occur in the item (i.e. the size of the fruit)
 freq_table <- raw %>%
@@ -44,6 +45,14 @@ freq_table <- freq_table %>%
 p_response_scores <- raw %>%
   left_join(select(freq_table, -frequency))
 
+#' calculates the top X score to append below
+top_x_scores <- p_response_scores %>%
+  select(-UI) %>%
+  arrange(participant, desc(MAUI)) %>%
+  group_by(participant) %>%
+  slice(seq_len(top_x)) %>%
+  summarise(top_x_MAUI = sum(MAUI))
+
 #' p_scores is a summary for each participant
 #' current reports fluency, the sum of all MAUI scores and the sum of all UI scores
 #' But very adaptable for new scores!
@@ -52,4 +61,5 @@ p_scores <- p_response_scores %>%
   group_by(participant) %>%
   summarise(fluency = n(),
             MAUI_sum = sum(MAUI),
-            UI_sum = sum(UI))
+            UI_sum = sum(UI)) %>%
+  left_join(top_x_scores)
