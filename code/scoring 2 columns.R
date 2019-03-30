@@ -35,7 +35,8 @@ mass_table <- freq_table %>%
   mutate(mass = frequency*count) %>%
   mutate(cum_mass = cumsum(mass)) %>%
   mutate(MAUI = (cum_mass - mass/2)/max(cum_mass),
-         UI = 1 - frequency/n)
+         UI = 1 - frequency/n,
+         norm_rank = (rank(cum_mass) - .5)/nrow(mass_table))
 
 #' appends MAUI and UI to freq_table
 freq_table <- freq_table %>%
@@ -63,3 +64,9 @@ p_scores <- p_response_scores %>%
             MAUI_sum = sum(MAUI),
             UI_sum = sum(UI)) %>%
   left_join(top_x_scores)
+
+mass_graph <- ggplot(mass_table) +
+  geom_line(aes(norm_rank, MAUI), color = 'blue') +
+  geom_line(aes(norm_rank, UI), color = 'red')
+
+plot(mass_graph)
