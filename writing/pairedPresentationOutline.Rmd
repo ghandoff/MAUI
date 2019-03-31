@@ -1,0 +1,59 @@
+---
+title: "MAUI Presentation Outline"
+author: "Garrett Jaeger & Zach Burns"
+date: "April 1, 2019"
+output:
+  pdf_document: default
+  word_document:
+    reference_docx: word-styles-default.docx
+  html_document: default
+---
+
+```{r setup, include=FALSE, echo = FALSE, message = FALSE, warning = FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+#library(plotly)
+```
+
+
+## Presentation Outline
+1. Standard definition suggests that we look for both novelty and usefulness
+    + approaches to orignality
+      - not in the most common list (TTCT)
+      - Statistical infrequency
+      - consensual assessment (Amabile)
+        * Individual Ideas
+        * Ideational Pool
+    + usefulness is personal
+2. Research Questions
+    + How does the originality of ideas fluctuate during DT?
+    + Can we provide more information about the creativity of an individual?
+    + How else can we observe children's creativity?
+3. Revising the Uniqueness Index
+    + Its usefulness
+      - less subjective
+      - thresholds create dichotomous tally to compare with other indices (fluency, flexibility)
+    + Its issues
+      - unclear reasoning behind thresholds
+      - overestimating originality
+      - resulting tallies are highly correlated with fluency
+    + MAUI
+      - acknowledging levels as unit of analysis
+      - distribution of ideas are attributed to item prompt
+4. Process Analyses
+    + Continuous MAUI
+      - _how_ original is an idea?
+    + Ideational Profiles
+      - revisiting the "order effect"
+      - Discriminating different approaches/strategies
+    + Shift Strategy >> episodic divergence
+      - adding granularity to divergence after lexical shifts
+5. Exploratory Play
+    + Curiosity and learning
+    + Affordances
+    + Troubleshooting and persistence
+6. Reflections on the Advancements and Flexibility of MAUI
+    + A better UI
+    + Profile as additional perpective
+    + Any prompt will do...
+    + Reduced number of prompts
