@@ -15,6 +15,14 @@ knitr::opts_chunk$set(echo = TRUE)
 #library(plotly)
 ```
 
+## Problem statement
+* Take as given the standardized answer set to an open-ended creativity task
+* One might predict that response freqency takes one of two shapes:
+  + More frequently given responses make up a large proportion of all responses, less frequently given responses make up a small proportion
+    - (Possible underlying process: responses are ordered, people generate the responses in order, more creative individuals can get through more of the order)
+  + Less frequently given responses make up a large proportion of all responses, more frequently given responses make up a small proportion
+    - (possible underlying process: ???)
+* For a variety of reasons, a standardized answer sets tend to take the latter shape
 
 ## Presentation Outline
 1. Standard definition suggests that we look for both novelty and usefulness
@@ -25,11 +33,10 @@ knitr::opts_chunk$set(echo = TRUE)
         * Individual Ideas
         * Ideational Pool
     + usefulness is personal
-2. Research Questions
-    + How does the originality of ideas fluctuate during DT?
-    + Can we provide more information about the creativity of an individual?
-    + How else can we observe children's creativity?
-3. Revising the Uniqueness Index
+2. Revising the Uniqueness Index
+
+The standardly ue
+
     + Its usefulness
       - less subjective
       - thresholds create dichotomous tally to compare with other indices (fluency, flexibility)
@@ -40,7 +47,7 @@ knitr::opts_chunk$set(echo = TRUE)
     + MAUI
       - acknowledging levels as unit of analysis
       - distribution of ideas are attributed to item prompt
-4. Process Analyses
+3. Process Analyses
     + Continuous MAUI
       - _how_ original is an idea?
     + Ideational Profiles
@@ -48,11 +55,11 @@ knitr::opts_chunk$set(echo = TRUE)
       - Discriminating different approaches/strategies
     + Shift Strategy >> episodic divergence
       - adding granularity to divergence after lexical shifts
-5. Exploratory Play
+4. Exploratory Play
     + Curiosity and learning
     + Affordances
     + Troubleshooting and persistence
-6. Reflections on the Advancements and Flexibility of MAUI
+5. Reflections on the Advancements and Flexibility of MAUI
     + A better UI
     + Profile as additional perpective
     + Any prompt will do...

@@ -82,3 +82,6 @@ score_frames <- foreach(i=seq(100, 1000, by=100), .combine='comb', .multicombine
 score_frames[[1]] <- bind_rows(score_frames[[1]])
 score_frames[[2]] <- bind_rows(score_frames[[2]])
 names(score_frames) <- c('score_frequencies', 'participant_scores')
+
+write.csv(score_frames[[1]], 'data/score_frequencies.csv')
+write.csv(score_frames[[2]], 'data/participant_scores.csv')

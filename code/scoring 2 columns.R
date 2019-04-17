@@ -10,6 +10,8 @@ library(readxl)
 #' first column must be named 'participant' and holds participant IDs
 #' secon column must be named 'response' and holds the standardized responses
 raw <- read_csv('data/test data.csv')
+raw$response <- str_replace_all(raw$response, "[^[:alnum:]]", " ") %>% #gets rid of non alphanumerics
+  tolower() #' turns everything to lowercase
 
 n <- length(unique(raw$participant)) #' calculates number of participants
 
