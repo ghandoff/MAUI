@@ -42,11 +42,11 @@ sample_responses <- function(all_responses, ids, item) {
 
 #' takes df of responses item id
 #' returns a df of response counts
-sort_count <- function(resp, item) {
+sort_freq <- function(resp, item) {
   resp %>%
     filter(TypeItem == item) %>% #TypeItem is file-specific
     group_by(Std) %>% #Std is file-specific
-    summarise(count = n()) %>%
+    summarise(frequency = n()) %>%
     ungroup() %>%
     mutate(TypeItem = item)
 } 
@@ -56,15 +56,17 @@ sort_count <- function(resp, item) {
 ranks <- function(resp, size, item) {
   resp %>%
     filter(TypeItem == item) %>% #TypeItem is file-specific
-    arrange(desc(count)) %>%
-    mutate(cum = cumsum(count)) %>%
-    group_by(count) %>%
-    summarise(cumsum = max(cum),
-              mass = n()) %>%
-    mutate(mass = mass*count,
-           MAUI = ((cumsum - mass) + (mass/2))/max(cumsum),
-           pct_giving = count/size) %>%
-    arrange(desc(count)) %>%
+    arrange(desc(frequency)) %>%
+    #mutate(cum = cumsum(frequency)) %>%
+    group_by(frequency) %>%
+    summarise(#cumsum = max(cum),
+              count = n()) %>%
+    mutate(mass = count*frequency) %>%
+    mutate(cum_mass = cumsum(mass),
+           MAUI = (cum_mass - mass/2)/max(cum_mass),
+           UI = 1 - frequency/n,
+           norm_rank = (rank(cum_mass) - .5)/nrow(resp)) %>%
+    arrange(desc(frequency)) %>%
     ungroup() %>%
     mutate(TypeItem = item)
 } 
