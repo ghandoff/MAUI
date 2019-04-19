@@ -38,7 +38,7 @@ mass_table <- freq_table %>%
   mutate(cum_mass = cumsum(mass)) %>%
   mutate(MAUI = (cum_mass - mass/2)/max(cum_mass),
          UI = 1 - frequency/n,
-         norm_rank = (rank(cum_mass) - .5)/nrow(mass_table))
+         norm_rank = (rank(cum_mass) - .5)/nrow(.))
 
 #' appends MAUI and UI to freq_table
 freq_table <- freq_table %>%
