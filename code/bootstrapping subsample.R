@@ -78,10 +78,13 @@ score_frames <- foreach(i=seq(100, 1000, by=100), .combine='comb', .multicombine
                         }
 
 #' score_frames is a list of 2 tibbles
-#' [[1]] is all the item scores, [[2]] is all the participant scores
+#' [[1]] is all the item scores, [[2]] is all the participant scores, [[3]] is just the target population scores
 score_frames[[1]] <- bind_rows(score_frames[[1]])
 score_frames[[2]] <- bind_rows(score_frames[[2]])
-names(score_frames) <- c('score_frequencies', 'participant_scores')
+score_frames[[3]] <- score_frames[[2]] %>%
+  filter(partID %in% target_sample$partID)
+names(score_frames) <- c('score_frequencies', 'participant_scores', 'target_participant_scores')
 
 write.csv(score_frames[[1]], 'data/score_frequencies.csv')
 write.csv(score_frames[[2]], 'data/participant_scores.csv')
+write.csv(score_frames[[3]], 'data/target_participant_scores.csv')
