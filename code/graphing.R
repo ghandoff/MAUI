@@ -22,14 +22,17 @@ mass_graph <- ggplot(score_freq) +
 
 response_trees <- ggplot(score_freq, aes(x = factor(sample_size), y = norm_rank, weight = mass_weight)) +
   geom_violin() +
+  geom_boxplot(width = 0.1) +
   facet_grid(rows = vars(TypeItem))
 
 MAUI_trees <- ggplot(score_freq, aes(x = factor(sample_size), y = MAUI, weight = mass_weight)) +
   geom_violin() +
+  geom_boxplot(width = 0.1) +
   facet_grid(rows = vars(TypeItem))
 
 UI_trees <- ggplot(score_freq, aes(x = factor(sample_size), y = UI, weight = mass_weight)) +
   geom_violin() +
+  geom_boxplot(width = 0.1) +
   facet_grid(rows = vars(TypeItem))
 
 #'histograms for all participants
@@ -128,3 +131,60 @@ target_top5_hist <- ggplot(target_scores, aes(top5_MAUI)) +
   facet_grid(rows = vars(TypeItem), cols = vars(sample_size)) +
   geom_density() +
   geom_line(aes(y = norm_curve), data = target_curve_top5, colour = "red")
+
+#'participant comparisons across sample sizes
+target_variation <- target_scores %>%
+  group_by(partID, TypeItem) %>%
+  summarise(mean_MAUI = mean(sum_MAUI),
+            sd_MAUI = sd(sum_MAUI),
+            mean_UI95 = mean(sum_UI95),
+            sd_UI95 = sd(sum_UI95),
+            mean_top5 = mean(top5_MAUI),
+            sd_top5 = sd(top5_MAUI),
+            sd_diff = sd_UI95 - sd_MAUI)
+
+var_I2 <- target_variation %>%
+  filter(TypeItem == 'I2')
+
+t.test(var_I2$sd_MAUI, var_I2$sd_UI95, paired=TRUE)
+
+
+t.test(filter(target_variation, TypeItem == 'F1')$sd_MAUI, filter(target_variation, TypeItem == 'F1')$sd_UI95, paired=TRUE)
+t.test(filter(target_variation, TypeItem == 'F2')$sd_MAUI, filter(target_variation, TypeItem == 'F2')$sd_UI95, paired=TRUE)
+t.test(filter(target_variation, TypeItem == 'F3')$sd_MAUI, filter(target_variation, TypeItem == 'F3')$sd_UI95, paired=TRUE)
+t.test(filter(target_variation, TypeItem == 'I1')$sd_MAUI, filter(target_variation, TypeItem == 'I1')$sd_UI95, paired=TRUE)
+t.test(filter(target_variation, TypeItem == 'I2')$sd_MAUI, filter(target_variation, TypeItem == 'I2')$sd_UI95, paired=TRUE)
+t.test(filter(target_variation, TypeItem == 'I3')$sd_MAUI, filter(target_variation, TypeItem == 'I3')$sd_UI95, paired=TRUE)
+t.test(filter(target_variation, TypeItem == 'U1')$sd_MAUI, filter(target_variation, TypeItem == 'U1')$sd_UI95, paired=TRUE)
+t.test(filter(target_variation, TypeItem == 'U2')$sd_MAUI, filter(target_variation, TypeItem == 'U2')$sd_UI95, paired=TRUE)
+t.test(filter(target_variation, TypeItem == 'U3')$sd_MAUI, filter(target_variation, TypeItem == 'U3')$sd_UI95, paired=TRUE)
+
+t.test(filter(target_variation, TypeItem == 'F1')$sd_top5, filter(target_variation, TypeItem == 'F1')$sd_UI95, paired=TRUE)
+t.test(filter(target_variation, TypeItem == 'F2')$sd_top5, filter(target_variation, TypeItem == 'F2')$sd_UI95, paired=TRUE)
+t.test(filter(target_variation, TypeItem == 'F3')$sd_top5, filter(target_variation, TypeItem == 'F3')$sd_UI95, paired=TRUE)
+t.test(filter(target_variation, TypeItem == 'I1')$sd_top5, filter(target_variation, TypeItem == 'I1')$sd_UI95, paired=TRUE)
+t.test(filter(target_variation, TypeItem == 'I2')$sd_top5, filter(target_variation, TypeItem == 'I2')$sd_UI95, paired=TRUE)
+t.test(filter(target_variation, TypeItem == 'I3')$sd_top5, filter(target_variation, TypeItem == 'I3')$sd_UI95, paired=TRUE)
+t.test(filter(target_variation, TypeItem == 'U1')$sd_top5, filter(target_variation, TypeItem == 'U1')$sd_UI95, paired=TRUE)
+t.test(filter(target_variation, TypeItem == 'U2')$sd_top5, filter(target_variation, TypeItem == 'U2')$sd_UI95, paired=TRUE)
+t.test(filter(target_variation, TypeItem == 'U3')$sd_top5, filter(target_variation, TypeItem == 'U3')$sd_UI95, paired=TRUE)
+
+t.test(filter(target_variation, TypeItem == 'F1')$sd_MAUI, filter(target_variation, TypeItem == 'F1')$sd_top5, paired=TRUE)
+t.test(filter(target_variation, TypeItem == 'F2')$sd_MAUI, filter(target_variation, TypeItem == 'F2')$sd_top5, paired=TRUE)
+t.test(filter(target_variation, TypeItem == 'F3')$sd_MAUI, filter(target_variation, TypeItem == 'F3')$sd_top5, paired=TRUE)
+t.test(filter(target_variation, TypeItem == 'I1')$sd_MAUI, filter(target_variation, TypeItem == 'I1')$sd_top5, paired=TRUE)
+t.test(filter(target_variation, TypeItem == 'I2')$sd_MAUI, filter(target_variation, TypeItem == 'I2')$sd_top5, paired=TRUE)
+t.test(filter(target_variation, TypeItem == 'I3')$sd_MAUI, filter(target_variation, TypeItem == 'I3')$sd_top5, paired=TRUE)
+t.test(filter(target_variation, TypeItem == 'U1')$sd_MAUI, filter(target_variation, TypeItem == 'U1')$sd_top5, paired=TRUE)
+t.test(filter(target_variation, TypeItem == 'U2')$sd_MAUI, filter(target_variation, TypeItem == 'U2')$sd_top5, paired=TRUE)
+t.test(filter(target_variation, TypeItem == 'U3')$sd_MAUI, filter(target_variation, TypeItem == 'U3')$sd_top5, paired=TRUE)
+
+t.test(filter(target_variation, TypeItem == 'F1')$mean_MAUI, filter(target_variation, TypeItem == 'F1')$mean_UI95, paired=TRUE)
+t.test(filter(target_variation, TypeItem == 'F2')$mean_MAUI, filter(target_variation, TypeItem == 'F2')$mean_UI95, paired=TRUE)
+t.test(filter(target_variation, TypeItem == 'F3')$mean_MAUI, filter(target_variation, TypeItem == 'F3')$mean_UI95, paired=TRUE)
+t.test(filter(target_variation, TypeItem == 'I1')$mean_MAUI, filter(target_variation, TypeItem == 'I1')$mean_UI95, paired=TRUE)
+t.test(filter(target_variation, TypeItem == 'I2')$mean_MAUI, filter(target_variation, TypeItem == 'I2')$mean_UI95, paired=TRUE)
+t.test(filter(target_variation, TypeItem == 'I3')$mean_MAUI, filter(target_variation, TypeItem == 'I3')$mean_UI95, paired=TRUE)
+t.test(filter(target_variation, TypeItem == 'U1')$mean_MAUI, filter(target_variation, TypeItem == 'U1')$mean_UI95, paired=TRUE)
+t.test(filter(target_variation, TypeItem == 'U2')$mean_MAUI, filter(target_variation, TypeItem == 'U2')$mean_UI95, paired=TRUE)
+t.test(filter(target_variation, TypeItem == 'U3')$mean_MAUI, filter(target_variation, TypeItem == 'U3')$mean_UI95, paired=TRUE)
