@@ -15,6 +15,7 @@ knitr::opts_chunk$set(echo = TRUE)
 #library(plotly)
 ```
 
+<<<<<<< HEAD
 1. Intro
     + Looking for novelty and usefulness (Runco & Jaeger)
       - approaches to orignality
@@ -33,6 +34,30 @@ knitr::opts_chunk$set(echo = TRUE)
       - Can we provide more information about the creativity of an individual?
       - How else can we observe children's creativity?
 2. Revising the Uniqueness Index
+=======
+## Problem statement
+* Take as given the standardized answer set to an open-ended creativity task
+* One might predict that response freqency takes one of two shapes:
+  + More frequently given responses make up a large proportion of all responses, less frequently given responses make up a small proportion
+    - (Possible underlying process: responses are ordered, people generate the responses in order, more creative individuals can get through more of the order)
+  + Less frequently given responses make up a large proportion of all responses, more frequently given responses make up a small proportion
+    - (possible underlying process: ???)
+* For a variety of reasons, a standardized answer sets tend to take the latter shape
+
+## Presentation Outline
+1. Standard definition suggests that we look for both novelty and usefulness
+    + approaches to orignality
+      - not in the most common list (TTCT)
+      - Statistical infrequency
+      - consensual assessment (Amabile)
+        * Individual Ideas
+        * Ideational Pool
+    + usefulness is personal
+2. Revising the Uniqueness Index
+
+The standardly ue
+
+>>>>>>> b7c75aa41f38976b17cb88a4d62a69510e97a87e
     + Its usefulness
       - Less subjective
       - Thresholds create dichotomous tally to compare with other indices (fluency, flexibility)
@@ -42,6 +67,7 @@ knitr::opts_chunk$set(echo = TRUE)
       - Overestimating originality
       - Resulting tallies are highly correlated with fluency
     + MAUI
+<<<<<<< HEAD
       - Acknowledging levels as unit of analysis
         * Response
         * Item
@@ -51,6 +77,10 @@ knitr::opts_chunk$set(echo = TRUE)
         * approach similar to Item Response Theory, where score represents the participant's ability and the item difficulty
       - Marketplace of ideas
         * identifying the best ideas
+=======
+      - acknowledging levels as unit of analysis
+      - distribution of ideas are attributed to item prompt
+>>>>>>> b7c75aa41f38976b17cb88a4d62a69510e97a87e
 3. Process Analyses
     + Continuous MAUI
       - _how_ original is an idea?
@@ -58,9 +88,15 @@ knitr::opts_chunk$set(echo = TRUE)
       - revisiting the "order effect" (Torrance; Silvia et al)
       - Discriminating different approaches/strategies
     + Shift Strategy >> episodic divergence
+<<<<<<< HEAD
       - adding granularity to divergence after lexical shifts (Acar & Runco)
 4. Exploratory Play
     + Curiosity and learning (Legare & Lombrowski)
+=======
+      - adding granularity to divergence after lexical shifts
+4. Exploratory Play
+    + Curiosity and learning
+>>>>>>> b7c75aa41f38976b17cb88a4d62a69510e97a87e
     + Affordances
     + Troubleshooting and persistence
 5. Reflections on the Advancements and Flexibility of MAUI

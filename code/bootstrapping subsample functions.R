@@ -42,11 +42,11 @@ sample_responses <- function(all_responses, ids, item) {
 
 #' takes df of responses item id
 #' returns a df of response counts
-sort_count <- function(resp, item) {
+sort_freq <- function(resp, item) {
   resp %>%
     filter(TypeItem == item) %>% #TypeItem is file-specific
     group_by(Std) %>% #Std is file-specific
-    summarise(count = n()) %>%
+    summarise(frequency = n()) %>%
     ungroup() %>%
     mutate(TypeItem = item)
 } 
@@ -56,15 +56,15 @@ sort_count <- function(resp, item) {
 ranks <- function(resp, size, item) {
   resp %>%
     filter(TypeItem == item) %>% #TypeItem is file-specific
-    arrange(desc(count)) %>%
-    mutate(cum = cumsum(count)) %>%
-    group_by(count) %>%
-    summarise(cumsum = max(cum),
-              mass = n()) %>%
-    mutate(mass = mass*count,
-           MAUI = ((cumsum - mass) + (mass/2))/max(cumsum),
-           pct_giving = count/size) %>%
-    arrange(desc(count)) %>%
+    group_by(frequency) %>%
+    summarise(count = n()) %>%
+    arrange(desc(frequency)) %>%
+    mutate(mass = count*frequency) %>%
+    mutate(cum_mass = cumsum(mass),
+           MAUI = (cum_mass - mass/2)/max(cum_mass),
+           UI = 1 - frequency/size,
+           norm_rank = (rank(cum_mass) - .5)/nrow(.)) %>%
+    arrange(desc(frequency)) %>%
     ungroup() %>%
     mutate(TypeItem = item)
 } 
@@ -72,7 +72,7 @@ ranks <- function(resp, size, item) {
 append_scores <- function(resp, rnks, item) {
   ranks <- rnks %>%
     filter(TypeItem == item) %>%
-    select(-cumsum, -mass)
+    select(-cum_mass, -mass)
   appended <- resp %>%
     filter(TypeItem == item) %>%
     left_join(ranks)
@@ -83,7 +83,7 @@ p_score <- function(resp, scrs, item){
     filter(TypeItem == item) %>%
     left_join(filter(scrs, TypeItem == item), by = 'Std')
   totals <- df %>%
-    mutate(UI95 = ifelse(pct_giving <= .05, 1, 0)) %>%
+    mutate(UI95 = ifelse(UI >= .95, 1, 0)) %>%
     group_by(partID) %>%
     summarise(sum_MAUI = sum(MAUI),
               avg_MAUI = mean(MAUI),
@@ -95,15 +95,14 @@ p_score <- function(resp, scrs, item){
     arrange(desc(MAUI), .by_group=TRUE) %>%
     slice(seq_len(5)) %>%
     summarise(top5_MAUI = sum(MAUI))
-  top_pct <- df %>%
-    group_by(partID) %>%
-    arrange(pct_giving, .by_group=TRUE) %>%
-    slice(seq_len(5)) %>%
-    mutate(pct_UI = 1-pct_giving) %>%
-    summarise(top5_pct = sum(pct_UI))
+  # top_pct <- df %>%
+  #   group_by(partID) %>%
+  #   arrange(pct_giving, .by_group=TRUE) %>%
+  #   slice(seq_len(5)) %>%
+  #   mutate(pct_UI = 1-pct_giving) %>%
+  #   summarise(top5_pct = sum(pct_UI))
   totals %>%
-    left_join(top_MAUI, by='partID') %>%
-    left_join(top_pct, by='partID')
+    left_join(top_MAUI, by='partID')
 }
 
 #' frame for Gini & other calculations

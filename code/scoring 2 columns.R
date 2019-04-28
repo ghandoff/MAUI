@@ -10,6 +10,8 @@ library(readxl)
 #' first column must be named 'participant' and holds participant IDs
 #' secon column must be named 'response' and holds the standardized responses
 raw <- read_csv('data/test data.csv')
+raw$response <- str_replace_all(raw$response, "[^[:alnum:]]", " ") %>% #gets rid of non alphanumerics
+  tolower() #' turns everything to lowercase
 
 n <- length(unique(raw$participant)) #' calculates number of participants
 
@@ -36,7 +38,7 @@ mass_table <- freq_table %>%
   mutate(cum_mass = cumsum(mass)) %>%
   mutate(MAUI = (cum_mass - mass/2)/max(cum_mass),
          UI = 1 - frequency/n,
-         norm_rank = (rank(cum_mass) - .5)/nrow(mass_table))
+         norm_rank = (rank(cum_mass) - .5)/nrow(.))
 
 #' appends MAUI and UI to freq_table
 freq_table <- freq_table %>%
