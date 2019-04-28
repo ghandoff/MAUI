@@ -15,45 +15,57 @@ knitr::opts_chunk$set(echo = TRUE)
 #library(plotly)
 ```
 
-
-## Presentation Outline
-1. Standard definition suggests that we look for both novelty and usefulness
-    + approaches to orignality
-      - not in the most common list (TTCT)
-      - Statistical infrequency
-      - consensual assessment (Amabile)
-        * Individual Ideas
-        * Ideational Pool
-    + usefulness is personal
-2. Research Questions
-    + How does the originality of ideas fluctuate during DT?
-    + Can we provide more information about the creativity of an individual?
-    + How else can we observe children's creativity?
-3. Revising the Uniqueness Index
+1. Intro
+    + Looking for novelty and usefulness (Runco & Jaeger)
+      - approaches to orignality
+        * not in the most common list (TTCT)
+        * Statistical infrequency
+        * consensual assessment (Amabile)
+          + Individual Ideas
+          + Ideational Pool (Runco)
+      - usefulness is personally meaningful
+        * _not_ the focus of our studies
+    + Outcomes and Process
+      - From assessment to behavioral coding (Bonawitz et al)
+      - Developmental methodologies (Adolph)
+    + Research Questions
+      - How does the originality of ideas fluctuate during DT?
+      - Can we provide more information about the creativity of an individual?
+      - How else can we observe children's creativity?
+2. Revising the Uniqueness Index
     + Its usefulness
-      - less subjective
-      - thresholds create dichotomous tally to compare with other indices (fluency, flexibility)
+      - Less subjective
+      - Thresholds create dichotomous tally to compare with other indices (fluency, flexibility)
     + Its issues
-      - unclear reasoning behind thresholds
-      - overestimating originality
-      - resulting tallies are highly correlated with fluency
+      - Unclear reasoning behind thresholds
+      - Sample dependency
+      - Overestimating originality
+      - Resulting tallies are highly correlated with fluency
     + MAUI
-      - acknowledging levels as unit of analysis
-      - distribution of ideas are attributed to item prompt
-4. Process Analyses
+      - Acknowledging levels as unit of analysis
+        * Response
+        * Item
+        * Individual
+        * Sample
+      - Non-parametric rank distribution density of ideas attributed to item prompt
+        * approach similar to Item Response Theory, where score represents the participant's ability and the item difficulty
+      - Marketplace of ideas
+        * identifying the best ideas
+3. Process Analyses
     + Continuous MAUI
       - _how_ original is an idea?
     + Ideational Profiles
-      - revisiting the "order effect"
+      - revisiting the "order effect" (Torrance; Silvia et al)
       - Discriminating different approaches/strategies
     + Shift Strategy >> episodic divergence
-      - adding granularity to divergence after lexical shifts
-5. Exploratory Play
-    + Curiosity and learning
+      - adding granularity to divergence after lexical shifts (Acar & Runco)
+4. Exploratory Play
+    + Curiosity and learning (Legare & Lombrowski)
     + Affordances
     + Troubleshooting and persistence
-6. Reflections on the Advancements and Flexibility of MAUI
+5. Reflections on the Advancements and Flexibility of MAUI
     + A better UI
     + Profile as additional perpective
     + Any prompt will do...
     + Reduced number of prompts
+    
