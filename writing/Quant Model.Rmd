@@ -1,0 +1,44 @@
+---
+title: "Quant Model"
+author: "Zach Burns"
+date: "April 30, 2019"
+output:
+  word_document:
+    reference_docx: word-styles-default.docx
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE, echo = FALSE, message = FALSE, warning = FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+#library(plotly)
+```
+
+#```{r code = readLines('Code/graphs in paper.R'), echo = FALSE, message = FALSE, warning = FALSE}
+#```
+
+## Definitions
+
+Assume the following general case. $$N$$ test subjexts respond to a prompt, each jotting down a different number of responses. Let $$t \in \{1, 2, ..., N\}$$ be a test subject, each of whom produces $$j_{t}$$ "jots." (In the example of a DT task, jots would be individual responses. More generally, jots can be any individuated state or response. In the example of a game with descrete game states, jots would be those states.) Thus, $$R_{t,j}$$ is the j^^th jot produced by the t^^th test subject.
+
+$$R$$ is the set of all responses $$\{R_{1,1}, R_{1,2}, ... , R_{1,j_{1}}, R_{2,1}, ..., R_{N,j_{N}}\}$$. The count of this set we call the _total mass_ of responses. We further define _frequency_ as the number of times a jot appears in $$R$$.
+
+Our uniqueness measure is built from a few basic principles of how we define uniqueness:
+1) Within a given response set $$R$$, all jots that have the same frequency are equally unique
+2) Within a given response set $$R$$, jots that have a lower frequency are more unique than jots that have a higher frequency
+3) Across response sets, uniqueness increases as total mass increases for jots at at fixed frequency
+
+Suppose the context for this measure is a DT task. $$R_{t,j}$$ is a response to a prompt, perhaps it is "paperweight" in response to "think of all the possible uses for a brick." If paperweight is given by 25 participants, then the frequency of the jot "paperweight" is 25. 
+1) If the jot "doorstop" was also given by 25 participants, then "doorstop" and "paperweight" have the same score.
+2) If the jot "build a house" was given by 30 participants, and "the saddest balloon ever" was given by 1 participant, then "build a house" has a lower score than "paperweight", which in turn has a lower score than "the saddest balloon ever."
+3) If "paperweight" was given by 25 participants in response sets with total masses of 200 and 100, then it has a higher score in the former set.
+
+These three principles 
+
+
+
+
+
+
+
