@@ -100,6 +100,7 @@ UI_tree <- ggplot(mass_table, aes(x = factor(task), y = UI, weight = mass_weight
 
 ########
 # code for the split violin viz
+# ABSOLUTELY NOT READY FOR PRIMETIME
 GeomSplitViolin <- ggproto("GeomSplitViolin", GeomViolin, draw_group = function(self, data, ..., draw_quantiles = NULL){
   data <- transform(data, xminv = x - violinwidth * (x - xmin), xmaxv = x + violinwidth * (xmax - x))
   grp <- data[1,'group']
