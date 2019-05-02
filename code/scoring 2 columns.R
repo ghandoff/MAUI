@@ -9,9 +9,15 @@ library(readxl)
 #' input file
 #' first column must be named 'participant' and holds participant IDs
 #' secon column must be named 'response' and holds the standardized responses
-raw <- read_csv('data/test data.csv')
-raw$response <- str_replace_all(raw$response, "[^[:alnum:]]", " ") %>% #gets rid of non alphanumerics
-  tolower() #' turns everything to lowercase
+
+
+
+# raw <- read_csv('data/test data.csv')
+# raw$response <- str_replace_all(raw$response, "[^[:alnum:]]", " ") %>% #gets rid of non alphanumerics
+#   tolower() #' turns everything to lowercase
+
+raw <- read_csv('data/Garrett GearToy Data_TwoColumn.csv')
+names(raw) <- c('participant', 'response')
 
 n <- length(unique(raw$participant)) #' calculates number of participants
 
@@ -67,8 +73,72 @@ p_scores <- p_response_scores %>%
             UI_sum = sum(UI)) %>%
   left_join(top_x_scores)
 
+mass_table <- mass_table %>%
+  mutate(mass_weight = mass/max(cum_mass)) %>%
+  mutate(task = 'gears')
+
 mass_graph <- ggplot(mass_table) +
   geom_line(aes(norm_rank, MAUI), color = 'blue') +
   geom_line(aes(norm_rank, UI), color = 'red')
 
-plot(mass_graph)
+response_tree <- ggplot(mass_table, aes(x = factor(task), y = norm_rank, weight = mass_weight)) +
+  geom_violin() +
+  geom_boxplot(width = 0.1)
+
+MAUI_tree <- ggplot(mass_table, aes(x = factor(task), y = MAUI, weight = mass_weight)) +
+  geom_violin() +
+  geom_boxplot(width = 0.1)
+
+UI_tree <- ggplot(mass_table, aes(x = factor(task), y = UI, weight = mass_weight)) +
+  geom_violin() +
+  geom_boxplot(width = 0.1)
+
+
+
+
+
+
+########
+# code for the split violin viz
+# ABSOLUTELY NOT READY FOR PRIMETIME
+GeomSplitViolin <- ggproto("GeomSplitViolin", GeomViolin, draw_group = function(self, data, ..., draw_quantiles = NULL){
+  data <- transform(data, xminv = x - violinwidth * (x - xmin), xmaxv = x + violinwidth * (xmax - x))
+  grp <- data[1,'group']
+  newdata <- plyr::arrange(transform(data, x = if(grp%%2==1) xminv else xmaxv), if(grp%%2==1) y else -y)
+  newdata <- rbind(newdata[1, ], newdata, newdata[nrow(newdata), ], newdata[1, ])
+  newdata[c(1,nrow(newdata)-1,nrow(newdata)), 'x'] <- round(newdata[1, 'x']) 
+  if (length(draw_quantiles) > 0 & !scales::zero_range(range(data$y))) {
+    stopifnot(all(draw_quantiles >= 0), all(draw_quantiles <= 
+                                              1))
+    quantiles <- ggplot2:::create_quantile_segment_frame(data, draw_quantiles)
+    aesthetics <- data[rep(1, nrow(quantiles)), setdiff(names(data), c("x", "y")), drop = FALSE]
+    aesthetics$alpha <- rep(1, nrow(quantiles))
+    both <- cbind(quantiles, aesthetics)
+    quantile_grob <- GeomPath$draw_panel(both, ...)
+    ggplot2:::ggname("geom_split_violin", grid::grobTree(GeomPolygon$draw_panel(newdata, ...), quantile_grob))
+  }
+  else {
+    ggplot2:::ggname("geom_split_violin", GeomPolygon$draw_panel(newdata, ...))
+  }
+})
+
+geom_split_violin <- function (mapping = NULL, data = NULL, stat = "ydensity", position = "identity", ..., draw_quantiles = NULL, trim = TRUE, scale = "area", na.rm = FALSE, show.legend = NA, inherit.aes = TRUE) {
+  layer(data = data, mapping = mapping, stat = stat, geom = GeomSplitViolin, position = position, show.legend = show.legend, inherit.aes = inherit.aes, params = list(trim = trim, scale = scale, draw_quantiles = draw_quantiles, na.rm = na.rm, ...))
+}
+#######
+
+# split_mass_table <- mass_table %>%
+#   select(-frequency, -count, -mass, -cum_mass) %>%
+#   gather("measure", "score", -norm_rank, -mass_weight, -task)
+# 
+# split_tree <- ggplot(split_mass_table, aes(x = score, y = norm_rank, fill = measure, weight = mass_weight)) +
+#   geom_split_violin(trim = TRUE) +
+#   geom_boxplot(width = 0.25, notch = FALSE, notchwidth = .4, outlier.shape = NA, coef=0) +
+#   labs(x=NULL,y="GM Attitude Score") +
+#   theme_classic() +
+#   theme(text = element_text(size = 20)) +
+#   scale_x_discrete(labels=c("0" = "Control\nCondition", "1" = "GM\nCondition")) +
+#   scale_fill_manual(values=c("#E69F00", "#999999"),
+#                     name="Survey\nPart",
+#                     breaks=c("1", "2"),
+#                     labels=c("Time 1", "Time 5"))
