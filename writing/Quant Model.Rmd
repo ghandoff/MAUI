@@ -24,10 +24,14 @@ Assume the following general case. $$N$$ test subjexts respond to a prompt, each
 
 $$R$$ is the set of all responses $$\{R_{1,1}, R_{1,2}, ... , R_{1,j_{1}}, R_{2,1}, ..., R_{N,j_{N}}\}$$. The count of this set we call the _total mass_ of responses. We further define _frequency_ as the number of times a jot appears in $$R$$.
 
+We propose a measure of uniqueness called Mass-Adjusted Uniqueness Index (MAUI). MAUI is a response-level scaling index that defines uniqueness 
+
 Our uniqueness measure is built from a few basic principles of how we define uniqueness:
 1) Within a given response set $$R$$, all jots that have the same frequency are equally unique
 2) Within a given response set $$R$$, jots that have a lower frequency are more unique than jots that have a higher frequency
 3) Across response sets, uniqueness increases as total mass increases for jots at at fixed frequency
+
+We define uniqueness as the 
 
 Suppose the context for this measure is a DT task. $$R_{t,j}$$ is a response to a prompt, perhaps it is "paperweight" in response to "think of all the possible uses for a brick." If paperweight is given by 25 participants, then the frequency of the jot "paperweight" is 25. 
 1) If the jot "doorstop" was also given by 25 participants, then "doorstop" and "paperweight" have the same score.
