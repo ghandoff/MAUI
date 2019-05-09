@@ -52,7 +52,8 @@ freq_table <- freq_table %>%
 
 #' p_response_scores is the original data with MAUI and UI scores appended to each response
 p_response_scores <- raw %>%
-  left_join(select(freq_table, -frequency))
+  left_join(select(freq_table, -frequency)) %>%
+  ungroup()
 
 #' calculates the top X score to append below
 top_x_scores <- p_response_scores %>%
@@ -75,7 +76,8 @@ p_scores <- p_response_scores %>%
 
 mass_table <- mass_table %>%
   mutate(mass_weight = mass/max(cum_mass)) %>%
-  mutate(task = 'gears')
+  mutate(task = 'gears',
+         freq_rank_color = dense_rank(frequency)%%2)
 
 mass_graph <- ggplot(mass_table) +
   geom_line(aes(norm_rank, MAUI), color = 'blue') +
@@ -93,7 +95,25 @@ UI_tree <- ggplot(mass_table, aes(x = factor(task), y = UI, weight = mass_weight
   geom_violin() +
   geom_boxplot(width = 0.1)
 
+#####
+# code for 'mega-viz'
+library(ggExtra)
 
+mega <- ggplot(p_response_scores, aes(MAUI)) +
+  geom_histogram(binwidth = .005, aes(y=..count../sum(..count..))) +
+  geom_density(aes(stat(scaled)))
+
+marg_mega <- ggMarginal(mega, type = 'density')
+
+mega <- ggplot(p_response_scores, aes(MAUI)) +
+  geom_dotplot(binwidth = .01) +
+  geom_freqpoly()
+
+bar <- ggplot(mass_table) +
+  geom_bar(aes(task, mass_weight, fill = freq_rank_color), stat = 'identity', width = .1) +
+  geom_bar()
+
+bar_dens <- ggMarginal(bar, type = 'density')
 
 
 
