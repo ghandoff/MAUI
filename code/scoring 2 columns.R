@@ -16,6 +16,12 @@ library(readxl)
 # raw$response <- str_replace_all(raw$response, "[^[:alnum:]]", " ") %>% #gets rid of non alphanumerics
 #   tolower() #' turns everything to lowercase
 
+# use next line for paperclip data
+#raw <- read_csv('data/Garrett Dissertation Data Answers Only.csv') %>%
+  filter(TypeItem == 'U1') %>%
+  select(one_of(c('partID', 'Std')))
+
+# Use next line for gear data
 raw <- read_csv('data/Garrett GearToy Data_TwoColumn.csv')
 names(raw) <- c('participant', 'response')
 
@@ -89,62 +95,158 @@ response_tree <- ggplot(mass_table, aes(x = factor(task), y = norm_rank, weight 
 
 MAUI_tree <- ggplot(mass_table, aes(x = factor(task), y = MAUI, weight = mass_weight)) +
   geom_violin() +
-  geom_boxplot(width = 0.1)
+  geom_boxplot(width = 0.1) +
+  coord_cartesian(ylim=c(0,1)) +
+  theme(axis.title.x=element_blank(),
+        axis.text.x=element_blank(),
+        axis.ticks.x=element_blank())
 
 UI_tree <- ggplot(mass_table, aes(x = factor(task), y = UI, weight = mass_weight)) +
   geom_violin() +
-  geom_boxplot(width = 0.1)
+  geom_boxplot(width = 0.1) +
+  coord_cartesian(ylim=c(0,1)) +
+  theme(axis.title.x=element_blank(),
+        axis.text.x=element_blank(),
+        axis.ticks.x=element_blank())
 
 #####
 # code for 'mega-viz'
 library(ggExtra)
 
-mega <- ggplot(p_response_scores, aes(MAUI)) +
-  geom_histogram(binwidth = .005, aes(y=..count../sum(..count..))) +
-  geom_density(aes(stat(scaled)))
-
-marg_mega <- ggMarginal(mega, type = 'density')
-
-mega <- ggplot(p_response_scores, aes(MAUI)) +
-  geom_dotplot(binwidth = .01) +
-  geom_freqpoly()
+hist_dens <- ggplot(p_response_scores, aes(x = MAUI, y=..ndensity..)) + 
+  stat_density(position="identity", geom="line") +
+  geom_histogram(binwidth = .005) +
+  coord_cartesian(xlim=c(0,1)) +
+  theme(axis.title.y=element_blank(),
+        axis.text.y=element_blank(),
+        axis.ticks.y=element_blank())
 
 bar <- ggplot(mass_table) +
-  geom_bar(aes(task, mass_weight, fill = freq_rank_color), stat = 'identity', width = .1) +
-  geom_bar()
+  geom_bar(aes(task, mass_weight, fill = freq_rank_color), stat = 'identity', width = 1) +
+  theme(axis.title.x=element_blank(),
+        axis.text.x=element_blank(),
+        axis.ticks.x=element_blank(),
+        axis.title.y=element_blank(),
+        axis.text.y=element_blank(),
+        axis.ticks.y=element_blank(),
+        legend.position='none')
 
-bar_dens <- ggMarginal(bar, type = 'density')
+#'for prettier graphs
+# library(Cairo)
+# CairoPNG(filename="graphs/gears_hist_dens.png", 
+#     units="in", 
+#     width=8, 
+#     height=5.6, 
+#     pointsize=12, 
+#     res=96)
+# print(hist_dens)
+# dev.off()
+# 
+# CairoPNG(filename="graphs/gears_bar.png", 
+#          units="in", 
+#          width=.5, 
+#          height=8, 
+#          pointsize=12, 
+#          res=96)
+# print(bar)
+# dev.off()
+# 
+# CairoPNG(filename='graphs/gears_MAUI.png', 
+#          units="in", 
+#          width=4, 
+#          height=5.6, 
+#          pointsize=12, 
+#          res=96)
+# print(MAUI_tree)
+# dev.off()
+# 
+# CairoPNG(filename='graphs/gears_UI.png', 
+#          units="in", 
+#          width=4, 
+#          height=5.6, 
+#          pointsize=12, 
+#          res=96)
+# print(UI_tree)
+# dev.off()
+# 
+# CairoPNG(filename='graphs/gears_responses.png', 
+#          units="in", 
+#          width=4, 
+#          height=5.6, 
+#          pointsize=12, 
+#          res=96)
+# print(response_tree)
+# dev.off()
 
 
+#######
+#Extra graphing stuff we might want later
 
+# for_graph <- p_response_scores
+# for_graph$task <- 'gears'
+# for_graph <- left_join(for_graph, select(mass_table, one_of(c('MAUI', 'freq_rank_color'))))
+# for_graph$freq_rank_color <- for_graph$freq_rank_color +1
+# 
+# hist_dens <- ggplot(for_graph, aes(x = MAUI)) + 
+#   stat_density(position="identity", geom="line", aes(y=..ndensity..)) +
+#   geom_histogram(binwidth = .005, aes(y=..ndensity..)) +
+#   geom_bar()
+# 
+# bar <- ggplot(for_graph, aes(x = task, fill = factor(MAUI))) +
+#   geom_bar(position = 'fill') +
+#   scale_fill_manual(values = for_graph$freq_rank_color)
+# 
+# 
+# mega <- ggplot(for_graph) +
+#   geom_histogram(binwidth = .005, aes(x=MAUI, y=..density..)) +
+#   geom_density(aes(x=MAUI, y=.01*..count..))
+# 
+# mega <- ggplot(for_graph, aes(MAUI)) +
+#   geom_histogram(binwidth = .005, aes(y=..count../sum(..count..))) +
+#   geom_density(aes(x = MAUI, stat(scaled)))
+# 
+# marg_mega <- ggMarginal(mega, type = 'density')
+# 
+# mega <- ggplot(for_graph, aes(MAUI)) +
+#   geom_dotplot(binwidth = .01) +
+#   geom_freqpoly()
+# 
+# 
+# 
+# bar_dens <- ggMarginal(bar, type = 'density')
+# 
+# 
+# 
 
 ########
 # code for the split violin viz
 # ABSOLUTELY NOT READY FOR PRIMETIME
-GeomSplitViolin <- ggproto("GeomSplitViolin", GeomViolin, draw_group = function(self, data, ..., draw_quantiles = NULL){
-  data <- transform(data, xminv = x - violinwidth * (x - xmin), xmaxv = x + violinwidth * (xmax - x))
-  grp <- data[1,'group']
-  newdata <- plyr::arrange(transform(data, x = if(grp%%2==1) xminv else xmaxv), if(grp%%2==1) y else -y)
-  newdata <- rbind(newdata[1, ], newdata, newdata[nrow(newdata), ], newdata[1, ])
-  newdata[c(1,nrow(newdata)-1,nrow(newdata)), 'x'] <- round(newdata[1, 'x']) 
-  if (length(draw_quantiles) > 0 & !scales::zero_range(range(data$y))) {
-    stopifnot(all(draw_quantiles >= 0), all(draw_quantiles <= 
-                                              1))
-    quantiles <- ggplot2:::create_quantile_segment_frame(data, draw_quantiles)
-    aesthetics <- data[rep(1, nrow(quantiles)), setdiff(names(data), c("x", "y")), drop = FALSE]
-    aesthetics$alpha <- rep(1, nrow(quantiles))
-    both <- cbind(quantiles, aesthetics)
-    quantile_grob <- GeomPath$draw_panel(both, ...)
-    ggplot2:::ggname("geom_split_violin", grid::grobTree(GeomPolygon$draw_panel(newdata, ...), quantile_grob))
-  }
-  else {
-    ggplot2:::ggname("geom_split_violin", GeomPolygon$draw_panel(newdata, ...))
-  }
-})
 
-geom_split_violin <- function (mapping = NULL, data = NULL, stat = "ydensity", position = "identity", ..., draw_quantiles = NULL, trim = TRUE, scale = "area", na.rm = FALSE, show.legend = NA, inherit.aes = TRUE) {
-  layer(data = data, mapping = mapping, stat = stat, geom = GeomSplitViolin, position = position, show.legend = show.legend, inherit.aes = inherit.aes, params = list(trim = trim, scale = scale, draw_quantiles = draw_quantiles, na.rm = na.rm, ...))
-}
+# GeomSplitViolin <- ggproto("GeomSplitViolin", GeomViolin, draw_group = function(self, data, ..., draw_quantiles = NULL){
+#   data <- transform(data, xminv = x - violinwidth * (x - xmin), xmaxv = x + violinwidth * (xmax - x))
+#   grp <- data[1,'group']
+#   newdata <- plyr::arrange(transform(data, x = if(grp%%2==1) xminv else xmaxv), if(grp%%2==1) y else -y)
+#   newdata <- rbind(newdata[1, ], newdata, newdata[nrow(newdata), ], newdata[1, ])
+#   newdata[c(1,nrow(newdata)-1,nrow(newdata)), 'x'] <- round(newdata[1, 'x']) 
+#   if (length(draw_quantiles) > 0 & !scales::zero_range(range(data$y))) {
+#     stopifnot(all(draw_quantiles >= 0), all(draw_quantiles <= 
+#                                               1))
+#     quantiles <- ggplot2:::create_quantile_segment_frame(data, draw_quantiles)
+#     aesthetics <- data[rep(1, nrow(quantiles)), setdiff(names(data), c("x", "y")), drop = FALSE]
+#     aesthetics$alpha <- rep(1, nrow(quantiles))
+#     both <- cbind(quantiles, aesthetics)
+#     quantile_grob <- GeomPath$draw_panel(both, ...)
+#     ggplot2:::ggname("geom_split_violin", grid::grobTree(GeomPolygon$draw_panel(newdata, ...), quantile_grob))
+#   }
+#   else {
+#     ggplot2:::ggname("geom_split_violin", GeomPolygon$draw_panel(newdata, ...))
+#   }
+# })
+# 
+# geom_split_violin <- function (mapping = NULL, data = NULL, stat = "ydensity", position = "identity", ..., draw_quantiles = NULL, trim = TRUE, scale = "area", na.rm = FALSE, show.legend = NA, inherit.aes = TRUE) {
+#   layer(data = data, mapping = mapping, stat = stat, geom = GeomSplitViolin, position = position, show.legend = show.legend, inherit.aes = inherit.aes, params = list(trim = trim, scale = scale, draw_quantiles = draw_quantiles, na.rm = na.rm, ...))
+# }
+
 #######
 
 # split_mass_table <- mass_table %>%
