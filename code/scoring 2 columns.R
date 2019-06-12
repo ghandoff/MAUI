@@ -131,6 +131,15 @@ bar <- ggplot(mass_table) +
         axis.ticks.y=element_blank(),
         legend.position='none')
 
+#' This graph is good to show how the violin graph is generated
+hist_dens_normrank <- ggplot(p_response_scores, aes(x = norm_rank,y = ..ndensity..)) + 
+  stat_density(position="identity", geom="line") +
+  geom_histogram(binwidth = .005) +
+  coord_flip(xlim=c(0,1)) +
+  theme(axis.title.y=element_blank(),
+        axis.text.y=element_blank(),
+        axis.ticks.y=element_blank()) 
+
 #'for prettier graphs
 # library(Cairo)
 # CairoPNG(filename="graphs/gears_hist_dens.png", 

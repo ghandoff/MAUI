@@ -1,18 +1,18 @@
 ---
 title: "Quant Model"
 author: "Zach Burns"
-date: "April 30, 2019"
+date: "June 10, 2019"
 output:
+  pdf_document: default
   word_document:
     reference_docx: word-styles-default.docx
-  pdf_document: default
   html_document: default
 ---
 
 ```{r setup, include=FALSE, echo = FALSE, message = FALSE, warning = FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
 
-#library(plotly)
 ```
 
 #```{r code = readLines('Code/graphs in paper.R'), echo = FALSE, message = FALSE, warning = FALSE}
@@ -20,7 +20,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Definitions
 
-Assume the following general case of $$N$$ task respondents responding to an open-ended prompt, each generating a different number of responses. Let $$t \in \{1, 2, ..., N\}$$ be a task respondent, each of whom produces $$j_{t}$$ _jots_. Thus, $$R_{t,j}$$ is the j^^th jot produced by the t^^th task respondent. $$R$$ is the set of all responses $$\{r_{1,1}, r_{1,2}, ... , r_{1,j_{1}}, r_{2,1}, ..., r_{N,j_{N}}\}$$. The count of this set we call the _total mass_ of responses. We further define _frequency_ as the number of times a jot appears in $$R$$. (Possibly can leave out the foolowing sentence) We use _jot_ in contexts where the relevant level of analysis is the participant (e.g. a task respondent producing jots) and _response_ in contexts where the relative level of analysis is the task (e.g. responses are scored relative to one another in the response set).
+Assume the following general case of $N$ task respondents responding to an open-ended prompt, each generating a different number of responses. Let $t \in \{1, 2, ..., N\}$ be a task respondent, each of whom produces $j_{t}$ _jots_. Thus, $R_{t,j}$ is the j^^th jot produced by the t^^th task respondent. $R$ is the set of all responses $\{r_{1,1}, r_{1,2}, ... , r_{1,j_{1}}, r_{2,1}, ..., r_{N,j_{N}}\}$. The count of this set we call the _total mass_ of responses. We further define _frequency_ as the number of times a jot appears in $R$. (Possibly can leave out the foolowing sentence) We use _jot_ in contexts where the relevant level of analysis is the participant (e.g. a task respondent producing jots) and _response_ in contexts where the relative level of analysis is the task (e.g. responses are scored relative to one another in the response set).
 
 For example, imagine a task respondent is given 3 equally-sized LEGO bricks, A, B, and C that can be placed in positions 1, 2, and 3. An observer could track the positions of all bricks, and one possible jot is "BC.0.A" indicating that block B is stacked on top of block C in position 1, position 2 is empty, and block A is in position 3. In this task, there are 99 possible non-empty configurations (Garrett: I did calculate this!), and researchers might be interested in how unique each of the configurations are.
 
@@ -28,39 +28,157 @@ For example, imagine a task respondent is given 3 equally-sized LEGO bricks, A, 
 
 We propose a measure of uniqueness called Mass-Adjusted Uniqueness Index (MAUI). MAUI is a response-level scaling index that defines uniqueness as a function of item and person parameters. (Garrett: I'm not sure exactly how to make this fit, but I'm sure we'll get after it at some point.) Specifically, MAUI defines uniqueness of a given response as the proportion of responses in the sample that were as- or less-frequently. MAUI has the following properties:
 
-1) Within a given response set $$R$$, all responses that have the same frequency have equal MAUI scores
-2) For a given response $$r_{t,j}$$ within response set $$R$$, all responses that have a lower frequency have lower MAUI scores
+1) Within a given response set $R$, all responses that have the same frequency have equal MAUI scores
+2) For a given response $r_{t,j}$ within response set $R$, all responses that have a lower frequency have lower MAUI scores
 
-#####
-#These two need some exposition
-3) The score is bounded between 0 and 1
-4) The average of many MAUI distributions is, by definition, a uniform distribution
+---
+#' These two need some exposition
+---
+3) The score is bounded between 0 and 1.
+4) The average of MAUI scores of all responses in a sample is always 1/2 (see proof in appendix).
 
-#####
-# I actually think this next statement isn't true anymore, and probably isn't important anyhow
-# Finally, a response $$r_{t,j}$$ with frequency $$f$$ will in general have a higher MAUI score in $$R_1$$ than $$R_2$$ if the total mass of $$R_1$$ is greater than the total mass of $$R_2$$. (though not guaranteed because it depends where that additional mass is in the distribution)
+---
+#' I actually think this next statement isn't true anymore, and probably isn't important anyhow
+Finally, a response $r_{t,j}$ with frequency $f$ will in general have a higher MAUI score in $R_1$ than $R_2$ if the total mass of $R_1$ is greater than the total mass of $R_2$. (though not guaranteed because it depends where that additional mass is in the distribution)
+---
 
-Suppose the following makeup of responses:
-Responses $$A_1$$, $$A_2$$, $$A_3$$, and $$A_4$$ were each given 5 times. 
-Responses $$B_1$$, $$B_2$$, and $$B_3$$ were each given 4 times. 
-Responses $$C_1$$, $$C_2$$, and $$C_3$$ were each given 3 times. 
-Responses $$D_1$$ and $$D_2$$ were each given twice. 
-Responses $$E_1$$, $$E_2$$, $$E_3$$, $$E_4$$, and $$E_5$$ were each given once.
-
-The mass of responses $$A_n$$ is therefore 20, $$B_n$$ is 12, $$C_n$$ is 9, $$D_n$$ is 4, and $$E_n$$ is 5, for a total response set mass of 50.
-
-
-
-Suppose the context for this measure is a DT task. $$R_{t,j}$$ is a response to a prompt, perhaps it is "paperweight" in response to "think of all the possible uses for a brick." If paperweight is given by 25 participants, then the frequency of the jot "paperweight" is 25. 
+---
+#' another example, maybe flesh out, maybe not.
+Suppose the context for this measure is a DT task. $R_{t,j}$ is a response to a prompt, perhaps it is "paperweight" in response to "think of all the possible uses for a brick." If paperweight is given by 25 participants, then the frequency of the jot "paperweight" is 25. 
 1) If the jot "doorstop" was also given by 25 participants, then "doorstop" and "paperweight" have the same score.
 2) If the jot "build a house" was given by 30 participants, and "the saddest balloon ever" was given by 1 participant, then "build a house" has a lower score than "paperweight", which in turn has a lower score than "the saddest balloon ever."
 3) If "paperweight" was given by 25 participants in response sets with total masses of 200 and 100, then it has a higher score in the former set.
+---
+
+## Example
+
+Suppose the following makeup of responses in a hypothetical sample:  
+Responses $A_1$, $A_2$, $A_3$, and $A_4$ were each given 5 times.  
+Responses $B_1$, $B_2$, and $B_3$ were each given 4 times.  
+Responses $C_1$ and $C_2$ were each given 3 times.  
+Responses $D_1$ and $D_2$ were each given twice.  
+Responses $E_1$ through $E_8$ were each given once.  
+
+The responses with the same letter were given an equal number of times, and thus will have the same MAUI score. The mass of responses $A_n$ is 20, $B_n$ is 12, $C_n$ is 6, $D_n$ is 4, and $E_n$ is 8, for a total response set mass of 50. Each response is given a MAUI score:  
+Responses $A_n$ each receive a score of $\frac{1}{2}*\frac{20}{50} = .2$.  
+Responses $B_n$ each receive a score of $\frac{20}{50}+\frac{1}{2}*\frac{12}{50} = .52$.  
+Responses $C_n$ each receive a score of $\frac{20}{50}+\frac{12}{50}+\frac{1}{2}*\frac{6}{50} = .7$.  
+Responses $D_n$ each receive a score of $\frac{20}{50}+\frac{12}{50}+\frac{6}{50}+\frac{1}{2}*\frac{4}{50} = .8$.  
+Responses $E_n$ each receive a score of $\frac{20}{50}+\frac{12}{50}+\frac{6}{50}+\frac{4}{50}+\frac{1}{2}*\frac{8}{50} = .92$.  
+
+The average of all MAUI scores for the 50 responses is:  
+$$\frac{20}{50}*.2 + \frac{12}{50}*.52+\frac{6}{50}*.7+\frac{4}{50}*.8+\frac{8}{50}*.92$$  
+$$= .08+.1248+.084+.064+.1472=.5$$
+
+## Visualizing Uniqueness
+We return to the metaphor of "low-hanging fruit" in order to visualize MAUI scores. In the metaphor, lower fruit are easier to reach, and therefore more common (and less unique).
+
+Using the above example, all of the $A_n$ responses are the lowest-hanging fruit. Because they are all equally frequent in the sample, they have equal MAUI scores, and are indistiguishable in uniqueness. All together, the 4 $A_n$ responses account for 40% of the sample.
+
+```{r fig.width = 2, fig.height = 7, echo = FALSE}
+example <- data.frame(response = rep(c("response"), 5),
+                      group = c('A', 'B', 'C', 'D', 'E'),
+                      pos = c(10, 26, 35, 40, 46),
+                      fill = c(2, 1, 2, 1, 2),
+                      freq = c(20, 12, 6, 4, 8))
+ggplot(data = example, aes(x = response, y = freq, fill = fill)) +
+  geom_bar(stat = 'identity') +
+  geom_text(aes(y = pos, label = group), colour = 'white') +
+  theme(axis.title.x=element_blank(),
+        axis.text.x=element_blank(),
+        axis.ticks.x=element_blank(),
+        axis.title.y=element_blank(),
+        axis.text.y=element_blank(),
+        axis.ticks.y=element_blank(),
+        legend.position='none')
+
+```
+
+In the preceding plot, each color grouping represents the mass of responses that were given an equal number of times. The center of each mass (i.e. where each group is labeled) represents the MAUI score of that group, as a percentage of the whole bar.
+
+If we imagine all response frequency groups hanging equidistantly in the ideation tree, and plot a smoothed histogram with a box-and-whiskers in the middle, we get the following:
+```{r fig.width = 4, fig.height = 7, echo = FALSE}
+example <- data.frame(response = rep(c("response"), 5),
+                      group = c('A', 'B', 'C', 'D', 'E'),
+                      pos = c(10, 26, 35, 40, 46),
+                      fill = c(2, 1, 2, 1, 2),
+                      freq = c(20, 12, 6, 4, 8),
+                      norm_rank = c(.1, .3, .5, .7, .9),
+                      MAUI = c(.2, .52, .7, .8, .92),
+                      mass_weight = c(.4, .24, .12, .08, .16))
+
+ggplot(example, aes(x = factor(response), y = norm_rank, weight = mass_weight)) +
+  geom_violin() +
+  geom_boxplot(width = 0.1) +
+  theme(axis.title.x=element_blank(),
+        axis.text.x=element_blank(),
+        axis.ticks.x=element_blank(),
+        #axis.title.y=element_blank(),
+        #axis.text.y=element_blank(),
+        axis.ticks.y=element_blank(),
+        legend.position='none') +
+    coord_cartesian(ylim=c(0,1))
+
+```
+
+In this plot, response frequency groups A, B, C, D, and E are graphed at .1, .3, .5, .7, and .9, respectively (i.e. equidistant and normalized). This plot provides a visual interpretation of where the masses of responses are. In the example, there are more responses that were frequently given, creating a fatter bottom and bringing the median (black line in the box-and-whiskers plot) to roughly $1/3$.
+
+we create a similar graph showing the MAUI scores across the entire sample. That is, instead of imagining the response frequency groups hanging equidistantly, we imagine they are at the height given by their MAUI score:
+```{r fig.width = 4, fig.height = 7, echo = FALSE}
+example <- data.frame(response = rep(c("response"), 5),
+                      group = c('A', 'B', 'C', 'D', 'E'),
+                      pos = c(10, 26, 35, 40, 46),
+                      fill = c(2, 1, 2, 1, 2),
+                      freq = c(20, 12, 6, 4, 8),
+                      norm_rank = c(.1, .3, .5, .7, .9),
+                      MAUI = c(.2, .52, .7, .8, .92),
+                      mass_weight = c(.4, .24, .12, .08, .16))
+
+ggplot(example, aes(x = factor(response), y = MAUI, weight = mass_weight)) +
+  geom_violin() +
+  geom_boxplot(width = 0.1) +
+  theme(axis.title.x=element_blank(),
+        axis.text.x=element_blank(),
+        axis.ticks.x=element_blank(),
+        #axis.title.y=element_blank(),
+        #axis.text.y=element_blank(),
+        axis.ticks.y=element_blank(),
+        legend.position='none') +
+    coord_cartesian(ylim=c(0,1))
+
+```
+
+With the MAUI score on the y-axis, and the frequency of responses on the x-axis, his plot essentially shows a smoothed histogram of MAUI scores from the example, with a box-and-whiskers plot in the center. (Note that the black line is the median value, not the mean, which would be at exactly .5) In actual samples with a greater number of responses, the sides of the plot will be nearly straight. MAUI was designed to have exactly this property.
 
 
 
 
 
+## Proof that weighted average of MAUI scores is always 1/2.
 
+Let $m_i$ be the frequency of the i^th^ most frequently given answer.
+
+Let $M_n = \sum_{i=1}^{n} m_i$; that is, the sum of all response mass frequencies from 1 (the largest) to n. If n is the rank of the least frequently given response (which will generally be those given by a single participant), then $M_n$ is the total count of all jots given by all participants in the sample.
+
+Therefore:
+
+$$M_n^2 = (\sum_{i=1}^{n} m_i)^2$$
+$$= (\sum_{i=1}^{n} m_i)*(\sum_{j=1}^{n} m_j)$$
+$$= (\sum_{i=1}^{n} m_i)*(\sum_{j=1}^{n} m_j)$$
+$$= (\sum_{i=1}^{n} m_i)*(m_i + \sum_{j\neq i}^{n} m_j)$$
+$$= (\sum_{i=1}^{n} m_i^2)+(\sum_{j\neq i}^{n} m_i m_j)$$
+$$= (\sum_{i=1}^{n} m_i^2)+2(\sum_{j<i}^{n} m_i m_j)$$
+
+MAUI is defined as the mass of all responses given more frequently plus the center of the mass of responses given equally frequently. The weighted average of MAUI scores is therefore defined as:
+
+$$\overline{MAUI}_{n} = \sum_{i=1}^{n} (\frac{m_i}{M_n})(\frac{\frac{m_i}{2}+\sum_{j=0}^{i-1} m_j}{M_n})$$
+$$= \sum_{i=1}^{n} (\frac{m_i}{M_n})(\frac{{m_i}+2\sum_{j=0}^{i-1} m_j}{2M_n})$$
+$$= \frac{1}{2M_n^2} [\sum_{i=1}^{n} ({m_i})({m_i}+2\sum_{j=0}^{i-1} m_j)]$$
+$$= \frac{1}{2M_n^2} [\sum_{i=1}^{n} ({m_i}^2)+2(\sum_{i=1}^{n}\sum_{j=0}^{i-1} m_i m_j)]$$
+$$= \frac{1}{2M_n^2} [\sum_{i=1}^{n} ({m_i}^2)+2(\sum_{j<i}^{n} m_i m_j)]$$
+As shown above, $$(\sum_{i=1}^{n} m_i^2)+2(\sum_{j<i}^{n} m_i m_j) = {M_n}^2$$
+
+The resulting quantity is 1/2 for all n. $\square$
 
 
 
