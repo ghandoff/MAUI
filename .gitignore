@@ -3,10 +3,4 @@
 .RData
 .Ruserdata
 *.Rproj
-<<<<<<< HEAD
-*.Rproj.user/
-**.Rproj.user
-=======
-*.Rproj.user/**
-.Rproj.user
->>>>>>> 225f53b25ab651a1d23e15ab1f616a3d20e9ebcb
+.Rhistory
