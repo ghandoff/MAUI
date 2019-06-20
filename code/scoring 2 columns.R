@@ -17,12 +17,12 @@ library(readxl)
 #   tolower() #' turns everything to lowercase
 
 # use next line for paperclip data
-#raw <- read_csv('data/Garrett Dissertation Data Answers Only.csv') %>%
+raw <- read_csv('data/Garrett Dissertation Data Answers Only.csv') %>%
   filter(TypeItem == 'U1') %>%
   select(one_of(c('partID', 'Std')))
 
 # Use next line for gear data
-raw <- read_csv('data/Garrett GearToy Data_TwoColumn.csv')
+#raw <- read_csv('data/Garrett GearToy Data_TwoColumn.csv')
 names(raw) <- c('participant', 'response')
 
 n <- length(unique(raw$participant)) #' calculates number of participants
@@ -55,6 +55,13 @@ mass_table <- freq_table %>%
 #' appends MAUI and UI to freq_table
 freq_table <- freq_table %>%
   left_join(select(mass_table, -count, -mass, -cum_mass))
+
+#' for possible SJDM stuff
+diss_tall <- read_csv('data/dissertation tall.csv') %>%
+  select(-MAUI, -UI)
+tall_w_MAUI <- left_join(diss_tall, freq_table, by = c("Std" = "response"))
+MAUI_by_time <- ggplot(tall_w_MAUI, aes(x = RespSec, y = MAUI, group = ShiftCount, colour = ShiftCount)) +
+  geom_smooth(method = lm)
 
 #' p_response_scores is the original data with MAUI and UI scores appended to each response
 p_response_scores <- raw %>%
