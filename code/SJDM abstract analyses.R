@@ -9,7 +9,7 @@ tipi <- read_csv('data/Profiles Tall99 TIPI.csv') %>%
          openness = (TIPI5 + TIPI10)/2)
 
 responses <- read_csv('data/Profiles Tall99 responses.csv') %>%
-  #mutate(item = paste(Type, ItemOrd, sep = "-")) %>%
+  mutate(item = paste(Type, ItemOrd, sep = "-")) %>%
   select('partID', 'item', 'Std', 'Flex56')
 names(responses) <- c('partID', 'TypeItem', 'Std', 'FlexCat')
 items <- c('1-1', '1-2', '1-3', '2-1', '2-2', '2-3', '3-1', '3-2', '3-3')
@@ -107,7 +107,14 @@ participant_scores <- foreach(m = items, .combine='rbind') %do%
 
 resp_time_scores <- responses_times %>%
   left_join(response_scores, by = c('TypeItem', 'Std')) %>%
-  mutate(delta_MAUI = if_else(RespOrd != 1, MAUI-lag(MAUI), NA))
+  mutate(delta_MAUI = if_else(RespOrd == 1, NA_real_, MAUI-lag(MAUI)))
+
+participant_deltas <- resp_time_scores %>%
+  group_by(partID) %>%
+  summarise(total_shifts = sum(ShiftCount),
+            mean_delta = mean(delta_MAUI, na.rm = TRUE),
+            var_delta = var(delta_MAUI, na.rm= TRUE),
+            fluency = n())
 
 
 #'participant comparisons across sample sizes
