@@ -106,7 +106,8 @@ participant_scores <- foreach(m = items, .combine='rbind') %do%
   p_score(responses, response_scores, m)  #' calculates participant scores
 
 resp_time_scores <- responses_times %>%
-  left_join(response_scores, by = c('TypeItem', 'Std'))
+  left_join(response_scores, by = c('TypeItem', 'Std')) %>%
+  mutate(delta_MAUI = if_else(RespOrd != 1, MAUI-lag(MAUI), NA))
 
 
 #'participant comparisons across sample sizes
