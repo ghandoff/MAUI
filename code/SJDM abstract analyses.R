@@ -117,6 +117,8 @@ participant_deltas <- resp_time_scores %>%
             fluency = n())
 
 
+
+
 #'participant comparisons across sample sizes
 sample_variation <- participant_scores %>%
   group_by(partID) %>%
